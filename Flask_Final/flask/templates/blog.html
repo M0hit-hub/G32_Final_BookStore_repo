@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog</title>
+  <link rel="stylesheet" href="/static/css/blog.css">
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="shortcut icon" href="/static/images/bookstorelogo.png" type="image/x-icon">
+  <link rel="shortcut icon" href="/static/images/bookstorelogo.png" type="image/x-icon">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <a href="{{ url_for('home') }}">
+      <img src="/static/images/bookstorelogo.png" alt="logo">
+    </a>
+    </div>
+    <div class="navmenu">
+      <ul>
+        <li><a href="{{ url_for('home') }}">HOME</a></li>
+        <li>
+          <select id="categoryDropdown" onchange="redirectToCategory()">
+              <option value="#">CATEGORIES</option>
+              <option value="{{ url_for('category', category_name='BusinessEbook') }}">BUSINESS EBOOK</option>
+              <option value="{{ url_for('category', category_name='health,wellness') }}">HEALTH/WELLNESS</option>
+              <option value="{{ url_for('category', category_name='history,politics') }}">HISTORY & POLITICS</option>
+              <option value="{{ url_for('category', category_name='Non-fiction') }}">NON-FICTION</option>
+              <option value="{{ url_for('category', category_name='Spirituality') }}">SPIRITUALITY</option>
+              <option value="{{ url_for('category', category_name='Mythology') }}">MYTHOLOGY</option>
+              <option value="{{ url_for('category', category_name='Languages') }}">LANGUAGES</option>
+          </select>
+      </li>
+      
+      <script>
+          function redirectToCategory() {
+              var dropdown = document.getElementById("categoryDropdown");
+              var selectedValue = dropdown.value.trim();  // Ensure no extra spaces
+              if (selectedValue !== "#") {  
+                  window.location.href = selectedValue;  // Redirect to Flask route
+              }
+          }
+      </script>
+      
+        <li><a href="{{ url_for('authors') }}">AUTHORS</a></li>
+        <li><a href="{{ url_for('about') }}">ABOUT</a></li>
+        <li><a href="{{ url_for('blog') }}">BLOG</a></li>
+        <li><a href="{{ url_for('login') }}">LOGIN</a></li>
+    </ul>
+
+
+      <div class="cart">
+        <a href="finalcart.html">
+          <i class='bx bxs-cart-alt'></i>
+          <span class="cart-count">0</span> Items | ₹<span class="cart-total">0</span>
+        </a>
+      </div>
+
+      <!-- <div class="cart">
+            <a href="finalcart.html">
+            <i class='bx bxs-cart-alt'></i>
+        </div>     -->
+      <!-- <div class="cart">
+            <i class='bx bxs-cart-alt'></i>
+        </div> -->
+  </nav>
+  <section class="cards-wrapper">
+    <div class="card-grid-space">
+      <div class="num">01</div>
+      <a class="card" href="/templates/index.html"
+        style="--bg-img: url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=1500&url=https://codetheweb.blog/assets/img/posts/html-syntax/cover.jpg)">
+        <div>
+          <h1>Variety Of Books</h1>
+          <p>Looking for your next great read? Whether you're a fan of thrilling mysteries, heartwarming romances, or
+            thought-provoking science fiction, our eBook store has something for everyone.</p>
+          <div class="date">5 Nov 2024</div>
+          <div class="tags">
+            <div class="tag">The Book Nook</div>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="card-grid-space">
+      <div class="num">02</div>
+      <a class="card" href="/templates/index.html"
+        style="--bg-img: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=1500&url=https://codetheweb.blog/assets/img/posts/basic-types-of-html-tags/cover.jpg')">
+        <div>
+          <h1>E Books</h1>
+          <p>Gone are the days of heavy books weighing down your bag.At our eBook store, we offer a world of digital
+            books that you can carry with you wherever you go.</p>
+          <div class="date">6 Nov 2024</div>
+          <div class="tags">
+            <div class="tag">The Book Nook</div>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="card-grid-space">
+      <div class="num">03</div>
+      <a class="card" href="/templates/index.html"
+        style="--bg-img: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=1500&url=https://codetheweb.blog/assets/img/posts/links-images-about-file-paths/cover.jpg')">
+        <div>
+          <h1>Convenience</h1>
+          <p>In today’s fast-paced world, eBooks offer the perfect solution for readers on the go.Whether you’re
+            commuting, traveling, or relaxing at home, your next great read is always just a click away. Shop our
+            collection now and start reading instantly!</p>
+          <div class="date">7 Nov 2024</div>
+          <div class="tags">
+            <div class="tag">The Book Nook</div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="footer-container">
+        <!-- Footer Sections -->
+        <div class="footer-section">
+            <h3 class="footer-title">Explore Our Store</h3>
+            <ul>
+              <li><a href="{{ url_for('category', category_name='BusinessEbook') }}">Business</a></li>
+              <li><a href="{{ url_for('category', category_name='health,wellness') }}">Health & Wellness</a>
+              </li>
+              <li><a href="{{ url_for('category', category_name='history,politics') }}">History & Politics</a>
+              </li>
+              <li><a href="{{ url_for('category', category_name='Spirituality') }}">Spirituality</a></li>
+              <li><a href="{{ url_for('category', category_name='Languages') }}">Languages</a></li>
+              <li><a href="{{ url_for('category', category_name='Mythology') }}">Mythology</a></li>
+          </ul>
+
+        </div>
+
+        
+
+        <div class="footer-section">
+            <h3 class="footer-title">Connect with Us</h3>
+            <div class="social-icons">
+                <a href="https://www.facebook.com" target="_blank" class="social-icon">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHHQ1tYDFw8In3ArE11fy-HfaGgjkh5fxd_w&s"
+                        alt="Facebook">
+                </a>
+                <a href="https://www.twitter.com" target="_blank" class="social-icon">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnVBm5LAuRicWnxNWosMv8DCOExNtHf532hA&s"
+                        alt="Twitter">
+                </a>
+                <a href="https://www.instagram.com" target="_blank" class="social-icon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/2048px-Instagram_logo_2022.svg.png"
+                        alt="Instagram">
+                </a>
+                <a href="https://www.linkedin.com" target="_blank" class="social-icon">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/768px-LinkedIn_logo_initials.png"
+                        alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h3 class="footer-title">Stay Informed</h3>
+            <p>Sign up for our newsletter to get exclusive updates, offers, and recommendations.</p>
+            <form action="/subscribe" method="post" class="newsletter-form">
+                <input type="email" placeholder="Enter your email" required class="newsletter-input">
+                <button type="submit" class="subscribe-btn">Subscribe</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+        <p>&copy; 2024 The BookNook. All Rights Reserved. | Designed with ❤ by Your Company</p>
+    </div>
+</footer>
+</body>
+
+</html>

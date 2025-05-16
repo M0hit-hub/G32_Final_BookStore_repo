@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="text-center mb-0">Track Your Order</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="tracking-icon mb-3">
+                            <i class="fas fa-shipping-fast text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <p class="text-muted">Enter your order ID to view the current status and details of your shipment</p>
+                    </div>
+                    
+                    {% if messages %}
+                    <div class="messages mb-4">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <form method="post" action="{% url 'order:track_order_input' %}">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="order_id" class="form-label">Order ID</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control form-control-lg" id="order_id" name="order_id" 
+                                       placeholder="Enter your order ID" required>
+                            </div>
+                            <div class="form-text">Your order ID was provided in your order confirmation email and receipt.</div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Track Order</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="text-center">
+                        <p class="mb-0">Can't find your order ID? <a href="#">Contact Support</a></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5>Recently Ordered?</h5>
+                    <p>If you have a user account, you can view all your orders in your <a href="{% url 'order:order_list' %}">order history</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.tracking-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background-color: rgba(13, 110, 253, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+{% endblock %}

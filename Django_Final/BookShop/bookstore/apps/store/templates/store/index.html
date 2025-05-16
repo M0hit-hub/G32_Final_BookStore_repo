@@ -1,0 +1,130 @@
+{% extends 'store/base.html' %}
+
+{% load static %}
+{% load customfunction %}
+{% block headermenu %}
+<div class="header-bottom">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="responsive categorymenu">
+					{% for p in cat %}
+					<div class="cat-wrapper">
+						<div class="text-center">
+							<a href="{% url 'store:category' id=p.id %}"><img src="{{ p.icon.url }}"/></a>
+							<a href="{% url 'store:category' id=p.id %}">{{ p.name }}</a>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+			{% block container %}
+			<div class="row">
+				<div class="col-sm-12">
+					<div style="margin:0 auto;">
+						<img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=900&q=80" alt="Bookstore Banner" style="width:100%;max-width:900px;height:300px;object-fit:cover;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.08);margin:20px auto;display:block;"/>
+					</div>
+				</div>
+				<div class="col-sm-12">
+					<div class="titleheader">
+						<h3 class="h2header text-center">New Published Book</h3>
+						<a href="#">See All</a>
+					</div>
+					<div class="regulara sliderzx">
+						{% for item in newbooks %}
+						<div class="book-wrapper text-center">
+							<div class="coverpage">
+								<img src="{{ item.coverpage.url }}"/>
+							</div>
+							<a href="{% url 'store:book' id=item.id %}">{{ item.name|text_short }}</a>
+							<a href="{% url 'store:writer' id=item.writer.id %}">{{ item.writer }}</a>
+							<div class="rating">
+								{{ item.totalrating|averagerating:item.totalreview }}
+								<span class="totalrating">{{ item.totalreview|add:-1 }}</span>
+							</div>
+							<p> {{ item.price }} ₹.</p>
+							{% if request.user.is_authenticated and request.user.is_staff or request.user.is_superuser %}
+								<a href="{% url 'admin_dashboard:book_edit_modal' item.id %}" class="btn btn-info mb-2 admin-edit"><i class="fa fa-edit"></i> Edit</a>
+								<a href="{% url 'admin_dashboard:book_delete_modal' item.id %}" class="btn btn-danger mb-2 admin-delete"><i class="fa fa-trash"></i> Delete</a>
+								<a href="{% url 'admin_dashboard:book_price_modal' item.id %}" class="btn btn-warning mb-2 admin-price"><i class="fa fa-tag"></i> Change Price</a>
+							{% else %}
+								<button class="btn btn-warning addTocart" data-book-id="{{ item.id }}">
+									<i class="fa fa-shopping-cart"></i>Add to cart
+								</button>
+							{% endif %}
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+
+				<div class="col-sm-12">
+					<div class="titleheader">
+						<h3 class="h2header text-center">Top Selling Book</h3>
+					</div>
+					<div class="regulara sliderzx">
+						{% for p in newbooks %}
+						<div class="book-wrapper text-center">
+							<div class="coverpage">
+								<img src="{{ p.coverpage.url }}"/>
+							</div>
+							<a href="{% url 'store:book' id=p.id %}">{{ p.name|text_short }}</a>
+							<a href="{% url 'store:writer'  id=p.writer.id %}">{{ p.writer }}</a>
+							<div class="rating">
+								{{ p.totalrating|averagerating:p.totalreview }}
+								<span class="totalrating">{{ p.totalreview|add:-1 }}</span>
+							</div>
+							<p> ₹{{ p.price }} ₹.</p>
+							{% if request.user.is_authenticated and request.user.is_staff or request.user.is_superuser %}
+								<a href="{% url 'admin_dashboard:book_edit_modal' p.id %}" class="btn btn-info mb-2 admin-edit"><i class="fa fa-edit"></i> Edit</a>
+								<a href="{% url 'admin_dashboard:book_delete_modal' p.id %}" class="btn btn-danger mb-2 admin-delete"><i class="fa fa-trash"></i> Delete</a>
+								<a href="{% url 'admin_dashboard:book_price_modal' p.id %}" class="btn btn-warning mb-2 admin-price"><i class="fa fa-tag"></i> Change Price</a>
+							{% else %}
+								<button class="btn btn-warning addTocart" data-book-id="{{ p.id }}">
+									<i class="fa fa-shopping-cart"></i>Add to cart
+								</button>
+							{% endif %}
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div> 
+			{% endblock %}
+
+<!-- Modal Structure -->
+<div class="modal fade" id="adminBookModal" tabindex="-1" aria-labelledby="adminBookModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" id="adminBookModalContent">
+      <!-- Content will be loaded here via JS -->
+    </div>
+  </div>
+</div>
+<script>
+function openAdminModal(url) {
+    $('#adminBookModalContent').html('<div class="p-4 text-center">Loading...</div>');
+    $('#adminBookModal').modal('show');
+    $.get(url, function(data) {
+        $('#adminBookModalContent').html(data.html);
+    });
+}
+$(document).on('click', '.admin-edit, .admin-delete, .admin-price', function(e) {
+    e.preventDefault();
+    openAdminModal($(this).attr('href'));
+});
+$(document).on('submit', '.admin-modal-form', function(e) {
+    e.preventDefault();
+    var form = $(this);
+    $.post(form.attr('action'), form.serialize(), function(data) {
+        if (data.success) {
+            $('#adminBookModal').modal('hide');
+            location.reload();
+        } else {
+            $('#adminBookModalContent').html(data.html);
+        }
+    });
+});
+</script>

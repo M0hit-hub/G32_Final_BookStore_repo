@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | The Book Nook</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background: #111;
+            color: #fff;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+        .contact-container {
+            max-width: 700px;
+            margin: 60px auto 40px auto;
+            background: #181818;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+            padding: 40px 32px;
+        }
+        .contact-container h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #f7c873;
+            letter-spacing: 2px;
+        }
+        .contact-container p {
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+        .contact-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #f7c873;
+            font-weight: 600;
+        }
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: none;
+            border-radius: 6px;
+            background: #222;
+            color: #fff;
+            font-size: 1rem;
+        }
+        .contact-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .contact-form button {
+            background: linear-gradient(90deg, #f7c873, #a259ff);
+            color: #111;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .contact-form button:hover {
+            background: linear-gradient(90deg, #a259ff, #f7c873);
+        }
+        .contact-details {
+            margin-top: 32px;
+            border-top: 1px solid #333;
+            padding-top: 24px;
+        }
+        .contact-details h2 {
+            color: #f7c873;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        .contact-details p {
+            color: #ccc;
+            margin: 0 0 8px 0;
+        }
+        @media (max-width: 600px) {
+            .contact-container {
+                padding: 20px 8px;
+            }
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            position: relative;
+        }
+        
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+            color: #28a745;
+        }
+        
+        .alert-error {
+            background-color: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #dc3545;
+        }
+        
+        .btn-close {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="contact-container">
+        <h1>Contact Us</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <p>We'd love to hear from you! Fill out the form below or reach us directly using the details provided.</p>
+        <div class="contact-form">
+            <form method="POST" action="{{ url_for('contact') }}">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+        <div class="contact-details">
+            <h2>Business Contact</h2>
+            <p><strong>Email:</strong> support@thebooknook.com</p>
+            <p><strong>Phone:</strong> +91 98765 43210</p>
+            <p><strong>Address:</strong> 123 Book Lane, Novel City, India</p>
+        </div>
+    </div>
+    {% include 'footer.html' %}
+</body>
+</html>

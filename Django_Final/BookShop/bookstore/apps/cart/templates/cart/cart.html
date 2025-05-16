@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Your Cart</h2>
+    {% if cart|length > 0 %}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Item</th>
+                                <th scope="col" class="text-center">Quantity</th>
+                                <th scope="col" class="text-end">Price</th>
+                                <th scope="col" class="text-end">Total</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in cart %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.type == 'book' %}
+                                            <img src="{{ item.book.coverpage.url }}" alt="{{ item.book.name }}" class="me-3" style="width: 80px; height: 100px; object-fit: cover;">
+                                            <div>
+                                                <h6 class="mb-0">{{ item.book.name }}</h6>
+                                                <small class="text-muted">Book</small>
+                                            </div>
+                                        {% elif item.type == 'merchandise' %}
+                                            {% if item.merchandise.image %}
+                                                <img src="{{ item.merchandise.image.url }}" alt="{{ item.merchandise.name }}" class="me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                                            {% else %}
+                                                <div class="me-3 bg-light d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                                    <span class="text-muted">No image</span>
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0">{{ item.merchandise.name }}</h6>
+                                                <small class="text-muted">Merchandise</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="align-middle text-center">
+                                    {% if item.type == 'book' %}
+                                    <form method="post" action="{% url 'cart:cart_update' bookid=item.book.id quantity=item.quantity %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <div class="input-group input-group-sm d-flex flex-row align-items-center gap-2" style="max-width: 120px; margin: 0 auto;">
+                                            <input type="number" name="quantity" class="form-control text-center" min="1" max="10" value="{{ item.quantity }}" style="width: 55px;">
+                                            <button type="submit" class="btn btn-outline-primary btn-sm" style="min-width: 60px;">Update</button>
+                                        </div>
+                                    </form>
+                                    {% elif item.type == 'merchandise' %}
+                                    <form method="post" action="{% url 'cart:merchandise_update' product_id=item.merchandise.id quantity=item.quantity %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <div class="input-group input-group-sm d-flex flex-row align-items-center gap-2" style="max-width: 120px; margin: 0 auto;">
+                                            <input type="number" name="quantity" class="form-control text-center" min="1" max="{{ item.merchandise.stock }}" value="{{ item.quantity }}" style="width: 55px;">
+                                            <button type="submit" class="btn btn-outline-primary btn-sm" style="min-width: 60px;">Update</button>
+                                        </div>
+                                    </form>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle text-end">₹{{ item.price }}</td>
+                                <td class="align-middle text-end" id="{{ item.type }}_{{ item.item.id }}_total">₹{{ item.total_price }}</td>
+                                <td class="align-middle text-end">
+                                    {% if item.type == 'book' %}
+                                        <a href="{% url 'cart:cart_remove' bookid=item.book.id %}" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    {% elif item.type == 'merchandise' %}
+                                        <a href="{% url 'cart:merchandise_remove' product_id=item.merchandise.id %}" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'store:index' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                </a>
+                <a href="{% url 'merchandise:merchandise_home' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-tshirt me-2"></i>Browse Merchandise
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Items ({{ cart|length }}):</span>
+                        <span>₹{{ cart.get_total_price }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Shipping:</span>
+                        <span>₹0.00</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3 fw-bold">
+                        <span>Total:</span>
+                        <span>₹{{ cart.get_total_price }}</span>
+                    </div>
+                    <a href="{% url 'order:order_create' %}" class="btn btn-primary w-100" id="checkoutBtn">
+                        <span id="checkoutBtnText">Proceed to Checkout</span>
+                        <span id="checkoutBtnSpinner" style="display:none;"><i class="fa fa-spinner fa-spin"></i></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+            <h4 class="mb-3">Your cart is empty</h4>
+            <p class="text-muted mb-4">Looks like you haven't added any items to your cart yet.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'store:index' %}" class="btn btn-primary">Browse Books</a>
+                <a href="{% url 'merchandise:merchandise_home' %}" class="btn btn-outline-primary">Browse Merchandise</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

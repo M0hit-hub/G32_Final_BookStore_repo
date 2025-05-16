@@ -1,0 +1,11 @@
+<form class="admin-modal-form" method="post" action="{% url 'admin_dashboard:book_delete_modal' book.id %}">
+    {% csrf_token %}
+    <div class="modal-header"><h5 class="modal-title">Delete Book</h5></div>
+    <div class="modal-body">
+        <p>Are you sure you want to delete <strong>{{ book.name }}</strong>?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <button type="button" class="btn btn-secondary btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form> 

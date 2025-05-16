@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} mb-4">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if order and shipment %}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Order Tracking</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Order Information</h5>
+                            <p>
+                                <strong>Order ID:</strong> #{{ order.id }}<br>
+                                <strong>Order Date:</strong> {{ order.created|date:"F d, Y" }}<br>
+                                <strong>Items:</strong> {{ order.totalbook }}<br>
+                                <strong>Total Amount:</strong> ₹{{ order.payable }}<br>
+                                <strong>Tracking Number:</strong> {{ shipment.tracking_number|default:"N/A" }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Shipping Information</h5>
+                            <p>
+                                <strong>Recipient:</strong> {{ order.name }}<br>
+                                <strong>Address:</strong> {{ order.address }}<br>
+                                {{ order.district }}, {{ order.division }} {{ order.zip_code }}<br>
+                                <strong>Phone:</strong> {{ order.phone }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="tracking-status mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Current Status</h5>
+                            <div class="estimated-delivery">
+                                <small class="text-muted">Est. Delivery: {{ estimated_delivery|date:"F d, Y" }}</small>
+                            </div>
+                        </div>
+                        <div class="alert {% if current_status == 'Delivered' %}alert-success{% else %}alert-info{% endif %}">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    {% if current_status == 'Order Placed' %}
+                                        <i class="fas fa-clipboard-check fa-2x"></i>
+                                    {% elif current_status == 'Processing' %}
+                                        <i class="fas fa-cogs fa-2x"></i>
+                                    {% elif current_status == 'Shipped' %}
+                                        <i class="fas fa-shipping-fast fa-2x"></i>
+                                    {% elif current_status == 'Out for Delivery' %}
+                                        <i class="fas fa-truck fa-2x"></i>
+                                    {% elif current_status == 'Delivered' %}
+                                        <i class="fas fa-check-circle fa-2x"></i>
+                                    {% else %}
+                                        <i class="fas fa-info-circle fa-2x"></i>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h5 class="mb-0">{{ current_status }}</h5>
+                                    <small class="text-muted">Last Updated: {{ shipment.updated_at|date:"F d, Y H:i" }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tracking-progress mb-4">
+                        <h5 class="mb-3">Order Progress</h5>
+                        <div class="progress-tracker">
+                            {% for step in steps %}
+                                <div class="step {% if step in completed_steps %}completed{% endif %} {% if step == current_status %}current{% endif %}">
+                                    <div class="step-icon">
+                                        {% if step == 'Order Placed' %}
+                                            <i class="fas fa-clipboard-check"></i>
+                                        {% elif step == 'Processing' %}
+                                            <i class="fas fa-cogs"></i>
+                                        {% elif step == 'Shipped' %}
+                                            <i class="fas fa-shipping-fast"></i>
+                                        {% elif step == 'Out for Delivery' %}
+                                            <i class="fas fa-truck"></i>
+                                        {% elif step == 'Delivered' %}
+                                            <i class="fas fa-check-circle"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="step-label">{{ step }}</div>
+                                </div>
+                                {% if not forloop.last %}
+                                    <div class="step-connector {% if step in completed_steps %}completed{% endif %}"></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if order_items %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Order Items</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-end">Price</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order_items %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.item_type == 'book' and item.book %}
+                                                <img src="{{ item.book.coverpage.url }}" alt="{{ item.book.name }}" class="me-3" style="width: 50px; height: 70px; object-fit: cover;">
+                                                <div>
+                                                    <h6 class="mb-0">{{ item.book.name }}</h6>
+                                                    <small class="text-muted">Book</small>
+                                                </div>
+                                            {% elif item.item_type == 'merchandise' and item.merchandise %}
+                                                {% if item.merchandise.image %}
+                                                    <img src="{{ item.merchandise.image.url }}" alt="{{ item.merchandise.name }}" class="me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="me-3 bg-light d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                        <span class="text-muted">No image</span>
+                                                    </div>
+                                                {% endif %}
+                                                <div>
+                                                    <h6 class="mb-0">{{ item.merchandise.name }}</h6>
+                                                    <small class="text-muted">Merchandise</small>
+                                                </div>
+                                            {% else %}
+                                                <div>
+                                                    <h6 class="mb-0">Unknown Item</h6>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="text-center">{{ item.quantity }}</td>
+                                    <td class="text-end">₹{{ item.price }}</td>
+                                    <td class="text-end">₹{{ item.get_cost }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'order:track_order_input' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-search me-2"></i>Track Another Order
+                </a>
+                <a href="{% url 'order:order_pdf' id=order.id %}" class="btn btn-outline-primary" target="_blank">
+                    <i class="fas fa-file-pdf me-2"></i>Download Invoice
+                </a>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Need Help?</h5>
+                </div>
+                <div class="card-body">
+                    <p>If you have any questions about your order, please contact our customer service team.</p>
+                    <div class="contact-info">
+                        <p>
+                            <i class="fas fa-envelope me-2"></i> support@bytesandbrew.com<br>
+                            <i class="fas fa-phone me-2"></i> +1 (555) 123-4567<br>
+                            <i class="fas fa-clock me-2"></i> Mon-Fri, 9:00 AM - 5:00 PM
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-search fa-3x text-muted"></i>
+            </div>
+            <h3>No Order Found</h3>
+            <p class="text-muted mb-4">The order you're looking for could not be found. Please check the order ID and try again.</p>
+            <a href="{% url 'order:track_order_input' %}" class="btn btn-primary">Track Another Order</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.progress-tracker {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin: 20px 0;
+    padding: 0;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+}
+
+.step-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    border: 2px solid #dee2e6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+    color: #adb5bd;
+}
+
+.step.completed .step-icon {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.step.current .step-icon {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.step-connector {
+    flex-grow: 1;
+    height: 3px;
+    background-color: #dee2e6;
+    margin: 0 5px;
+    position: relative;
+    top: -20px;
+    z-index: 0;
+}
+
+.step-connector.completed {
+    background-color: #28a745;
+}
+
+.step-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-align: center;
+    max-width: 80px;
+}
+
+.step.completed .step-label,
+.step.current .step-label {
+    font-weight: 600;
+    color: #212529;
+}
+</style>
+{% endblock %} 

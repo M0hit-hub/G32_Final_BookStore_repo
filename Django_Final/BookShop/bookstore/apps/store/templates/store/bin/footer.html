@@ -1,0 +1,115 @@
+{% load static %}
+
+<style>
+.footer {
+	background: #181c24;
+	color: #fff;
+	padding: 40px 0 0 0;
+	font-size: 16px;
+}
+.footer h3 {
+	color: #fff;
+	font-weight: 600;
+	margin-bottom: 18px;
+}
+.footer ul, .footer li, .footer p, .footer span, .footer a, .footer small {
+	color: #fff !important;
+}
+.footer .footer_menu ul {
+	list-style: none;
+	padding: 0;
+}
+.footer .footer_menu li {
+	margin-bottom: 10px;
+}
+.footer .footer_contact i {
+	margin-right: 10px;
+	color: #ffb347;
+	font-size: 20px;
+}
+.footer .footer_paymentmethod img {
+	background: #fff;
+	border-radius: 6px;
+	padding: 4px 10px;
+	margin-right: 10px;
+	height: 40px;
+	transition: transform 0.2s;
+}
+.footer .footer_paymentmethod img:hover {
+	transform: scale(1.1) rotate(-3deg);
+	box-shadow: 0 2px 8px #ffb34744;
+}
+.footer .footer_social {
+	margin-top: 18px;
+}
+.footer .footer_social a {
+	color: #fff;
+	margin-right: 12px;
+	font-size: 22px;
+	transition: color 0.2s;
+}
+.footer .footer_social a:hover {
+	color: #ffb347;
+}
+.footer hr {
+	border-top: 1px solid #333;
+}
+.footer .copyright {
+	margin: 18px 0 0 0;
+	text-align: center;
+	color: #fff;
+	font-size: 15px;
+}
+</style>
+
+<div class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6 col-md-4 col-xs-12 footer_menu">
+				<h3>Contact</h3>
+				<ul>
+					<li class="footer_contact">
+						<i class="fa fa-phone"></i>
+						<span>+91 6263056779</span>
+					</li>
+					<li class="footer_contact">
+						<i class="fa fa-envelope"></i>
+						<span>test@gmail.com</span>
+					</li>
+					<li class="footer_contact">
+						<i class="fa fa-map-marker"></i>
+						<span>Rajpura, Punjab, India</span>
+					</li>
+				</ul>
+				<div class="footer_social">
+					<a href="#"><i class="fa fa-facebook"></i></a>
+					<a href="#"><i class="fa fa-twitter"></i></a>
+					<a href="#"><i class="fa fa-instagram"></i></a>
+					<a href="#"><i class="fa fa-linkedin"></i></a>
+				</div>
+			</div>
+		 
+			 <div class="col-sm-6 col-md-4 col-xs-12 footer_menu">
+				<h3>Menu</h3>
+				<ul>
+					<li class="footer_menu">
+						<a href="{% url 'store:books' %}"><i class="fa fa-angle-right"></i> Books</a>
+					</li>
+				</ul>
+			</div>
+			
+			<div class="col-sm-6 col-md-4 col-xs-12 footer_news">
+				<h3>We accept payment via</h3>
+				<div class="footer_paymentmethod">
+					<img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Google_Pay_Logo.svg" alt="GPay" />
+					<img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" alt="EMI" />
+					<img src="https://cdn-icons-png.flaticon.com/512/126/126510.png" alt="COD" />
+				</div>
+			</div>
+		</div>
+		<hr>
+		<div class="copyright">
+			&copy; {{ now|date:'Y' }} Online Book Store. Made with <span style="color:#ffb347;">&#10084;</span> All rights reserved.
+		</div>
+	</div>
+</div>

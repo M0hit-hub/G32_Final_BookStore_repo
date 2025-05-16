@@ -1,0 +1,238 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block title %}Update Order Status{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Update Order #{{ order.id }} Status</h2>
+    <div>
+        <a href="{% url 'admin_dashboard:order_detail' order.id %}" class="btn">Back to Order Details</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3>Order Status</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'admin_dashboard:update_order_status' order.id %}" class="status-update-form">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="status">Shipment Status:</label>
+                        <select name="status" id="status" class="form-control">
+                            {% for status_value, status_label in status_options %}
+                            <option value="{{ status_value }}" {% if shipment.status == status_value %}selected{% endif %}>{{ status_label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tracking_number">Tracking Number:</label>
+                        <input type="text" name="tracking_number" id="tracking_number" class="form-control" value="{{ shipment.tracking_number|default:'' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="carrier">Carrier:</label>
+                        <input type="text" name="carrier" id="carrier" class="form-control" value="{{ shipment.carrier|default:'' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Payment Status:</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="paid" name="paid" {% if order.paid %}checked{% endif %}>
+                            <label for="paid" class="toggle-label">
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-text">{% if order.paid %}Paid{% else %}Pending{% endif %}</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Update Status</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3>Current Status</h3>
+            </div>
+            <div class="card-body">
+                <div class="info-row">
+                    <div class="info-label">Order ID:</div>
+                    <div class="info-value">#{{ order.id }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Customer:</div>
+                    <div class="info-value">{{ order.name }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Total Amount:</div>
+                    <div class="info-value">₹{{ order.payable }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Payment Status:</div>
+                    <div class="info-value">
+                        {% if order.paid %}
+                        <span class="badge success">Paid</span>
+                        {% else %}
+                        <span class="badge warning">Pending</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Shipment Status:</div>
+                    <div class="info-value">
+                        <span class="badge 
+                            {% if shipment.status == 'delivered' %}success
+                            {% elif shipment.status == 'order placed' %}info
+                            {% else %}warning{% endif %}">
+                            {{ shipment.status|title }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -15px;
+    }
+    
+    .col-md-6 {
+        padding: 0 15px;
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    @media (max-width: 768px) {
+        .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+            margin-bottom: 20px;
+        }
+    }
+    
+    .info-row {
+        display: flex;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    
+    .info-label {
+        width: 150px;
+        font-weight: bold;
+        color: #555;
+    }
+    
+    .info-value {
+        flex: 1;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 0.8rem;
+        background-color: #777;
+        color: white;
+    }
+    
+    .badge.success {
+        background-color: var(--success-color);
+    }
+    
+    .badge.warning {
+        background-color: var(--warning-color);
+    }
+    
+    .badge.info {
+        background-color: var(--primary-color);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+    }
+    
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 120px;
+        height: 34px;
+        margin-left: 10px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .toggle-label {
+        position: relative;
+        display: block;
+        height: 34px;
+        background-color: #ccc;
+        border-radius: 17px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .toggle-switch input:checked + .toggle-label {
+        background-color: var(--success-color);
+    }
+    
+    .toggle-slider {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 30px;
+        height: 30px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.3s;
+    }
+    
+    .toggle-switch input:checked + .toggle-label .toggle-slider {
+        transform: translateX(80px);
+    }
+    
+    .toggle-text {
+        position: absolute;
+        top: 8px;
+        left: 45px;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    
+    .mt-4 {
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %} 

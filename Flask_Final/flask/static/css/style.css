@@ -1,0 +1,737 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
+/*---navbar---*/
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    width: auto;
+    height: auto;
+    background: #000000;
+}
+
+.navbar img {
+    height: 130px;
+    padding: 20px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+}
+
+.navmenu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+}
+
+.navmenu li {
+    display: inline-block;
+    margin-right: 30px;
+}
+
+.navmenu li a {
+    color: #ffffff;
+    margin-right: 20px;
+    padding: 0px 10px;
+    font-size: 18px;
+    font-family: "Montserrat", sans-serif;
+    ;
+}
+
+.navmenu li select {
+    color: #000000;
+    font-size: 18px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.navmenu li select option {
+    color: #000000;
+    font-family: "Montserrat", sans-serif;
+}
+
+.navmenu .cart i {
+    color: #ffffff;
+    position: relative;
+    right: 30px;
+    background-image: linear-gradient(rgb(238, 130, 130), blue);
+    padding: 10px;
+    border-radius: 50px;
+}
+
+.books-slide {
+    margin-top: 8px;
+}
+
+
+/* search-content */
+
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Search Header Styling */
+.search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 8px 15px rgba(160, 118, 54, 0.641);
+    animation: fadeIn 1s ease-in-out;
+}
+
+
+/* Input Fields */
+.search-input,
+.category-dropdown,
+.author-dropdown {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 30px;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    background-color: #fff;
+    width: 25%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+
+.search-input:focus,
+.category-dropdown:focus,
+.author-dropdown:focus {
+    border-color: #2196f3;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+    outline: none;
+}
+
+/* Search Button */
+.find-book-btn {
+    padding: 12px 35px;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgb(255, 255, 255);
+    background-color: #9c6615;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.find-book-btn:hover {
+    background-color: #413620;
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .search-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .search-input,
+    .category-dropdown,
+    .author-dropdown,
+    .find-book-btn {
+        width: 100%;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+main {
+    background-color: #cdd1de;
+}
+
+h2.new-releases {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    color: #ff6b6b;
+    background-color: #413620;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+h2.popular-section {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    color: #ff6b6b;
+    background-color: #413620;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+/* Book List */
+.book-list {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+/* Individual Book Items */
+.book-item {
+    background: linear-gradient(135deg, #fff0f5, #f0fff0);
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0px 10px 30px rgba(151, 83, 23, 0.623);
+    width: 20%;
+    margin-bottom: 30px;
+    transition: box-shadow 0.4s ease, transform 0.3s ease;
+}
+
+.book-item:hover {
+    box-shadow: 0px 16px 40px rgba(255, 119, 0, 0.658);
+    transform: translateY(-7px);
+}
+
+/* Book Cover Image */
+.book-item img {
+    width: 95%;
+    height: 60%;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0px 4px 12px rgba(255, 160, 122, 0.2);
+}
+
+.book-item:hover img {
+    transform: scale(1.1);
+    box-shadow: 0px 8px 20px rgba(255, 160, 122, 0.3);
+}
+
+/* Book Title */
+.book-item h3 {
+    font-size: 1.6em;
+    margin: 15px 0;
+    color: #ff6f61;
+    font-weight: bold;
+    background: linear-gradient(90deg, #9c6615, #9f7833);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Price Styling */
+.book-item .price {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #ab4b4b;
+    margin: 10px 0;
+}
+
+/* Buttons */
+.book-item button {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    margin: 10px 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Detail Button */
+.book-item .detail-btn {
+    background: linear-gradient(45deg, #413620, #ffd791);
+    color: #fff;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.book-item .detail-btn:hover {
+    background-color: #3b82f6;
+    transform: translateY(-3px);
+}
+
+/* Buy Button */
+.book-item .buy-btn {
+    background: linear-gradient(45deg, #413620, #ffd791);
+    color: #fff;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.book-item .buy-btn:hover {
+    background-color: #218838;
+    transform: translateY(-3px);
+}
+
+/* Responsive Styling */
+@media (max-width: 1200px) {
+    .book-item {
+        width: 30%;
+    }
+}
+
+@media (max-width: 768px) {
+    .book-item {
+        width: 45%;
+    }
+}
+
+@media (max-width: 576px) {
+    .book-item {
+        width: 100%;
+    }
+}
+
+/* footer */
+
+.footer {
+    background: linear-gradient(135deg, #ffd791,#9c6615);
+    color: white;
+    padding: 60px 20px;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0 20px;
+}
+
+.footer-section {
+    width: 22%;
+    margin-bottom: 30px;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.footer-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+}
+
+.footer-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 15px;
+}
+
+.footer-section ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    position: relative;
+    transition: color 0.3s ease, padding-left 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #000;
+    padding-left: 10px;
+}
+
+/* Slide-in Animation for Links */
+.slide-in-links li {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideIn 0.6s forwards;
+}
+
+.slide-in-links li:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.slide-in-links li:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.slide-in-links li:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.slide-in-links li:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.slide-in-links li:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.slide-in-links li:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+/* Social Media Icons */
+.social-icons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    opacity: 0;
+    animation: slideUp 1s forwards;
+}
+
+.social-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-icon img {
+    width: 25px;
+    height: 25px;
+    transition: transform 0.3s ease;
+}
+
+.social-icon:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.social-icon:hover img {
+    transform: rotate(20deg);
+}
+
+/* Newsletter Section */
+.newsletter-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+}
+
+.newsletter-input {
+    padding: 15px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #333;
+    transition: border 0.3s ease;
+}
+
+.newsletter-input:focus {
+    border: 2px solid #f1c40f;
+    outline: none;
+}
+
+.subscribe-btn {
+    background-color: #f1c40f;
+    color: white;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.subscribe-btn:hover {
+    background-color: #e67e22;
+    transform: scale(1.05);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9rem;
+    color: #ccc;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-in-out forwards;
+}
+
+.footer-bottom p {
+    margin: 0;
+}
+
+/* Keyframe Animations */
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal Background */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Make sure it's above other content */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 80%;
+    text-align: center;
+    position: relative;
+}
+
+/* Close Button */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #000;
+}
+
+/* Modal Image */
+#modal-image {
+    margin-top: 20px;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+/* Buy Button Styling (Optional) */
+.buy-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.buy-btn:hover {
+    background-color: #45a049;
+}
+
+
+/* Add this to your style.css file */
+
+.cart-notification {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    padding: 15px 25px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+}
+
+.cart-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+}
+
+.notification-content i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .modal.show {
+    display: block;
+    opacity: 1;
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 900px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-30px);
+    transition: transform 0.3s ease;
+  }
+  
+  .modal.show .modal-content {
+    transform: translateY(0);
+  }
+  
+  .close-modal {
+    color: #888;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .close-modal:hover {
+    color: #333;
+  }
+  
+  .modal-body {
+    display: flex;
+    gap: 30px;
+  }
+  
+  .modal-left {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .modal-left img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 5px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal-right {
+    flex: 2;
+  }
+  
+  .modal-right h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .modal-right #modalBookAuthor {
+    font-style: italic;
+    margin-bottom: 15px;
+    color: #666;
+  }
+  
+  .modal-right .price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4caf50;
+    margin-bottom: 20px;
+  }
+  
+  .book-description {
+    margin: 25px 0;
+  }
+  
+  .book-description h3 {
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .book-description p {
+    line-height: 1.6;
+    color: #555;
+  }
+  
+  .modal-buy-btn {
+    width: 200px;
+    margin-top: 20px;
+  }
+  
+  /* Responsive Modal */
+  @media (max-width: 768px) {
+    .modal-body {
+      flex-direction: column;
+    }
+    
+    .modal-left, .modal-right {
+      width: 100%;
+    }
+    
+    .modal-left {
+      margin-bottom: 20px;
+    }
+    
+    .modal-content {
+      width: 90%;
+      padding: 15px;
+    }
+  }

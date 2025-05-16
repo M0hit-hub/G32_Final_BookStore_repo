@@ -1,0 +1,63 @@
+# Django and Core Dependencies
+Django==3.2.15
+asgiref==3.8.1
+sqlparse==0.5.3
+pytz==2025.2
+typing_extensions==4.13.2
+
+# Database
+mysql-connector-python==9.0.0
+
+# Form Handling and UI
+django-crispy-forms==1.14.0
+crispy-bootstrap4==2022.1
+
+# Image Processing
+Pillow==10.2.0
+
+# PDF Generation
+reportlab==4.4.0
+xhtml2pdf==0.2.17
+svglib==1.5.1
+tinycss2==1.4.0
+cssselect2==0.8.0
+lxml==5.4.0
+html5lib==1.1
+webencodings==0.5.1
+six==1.17.0
+
+# PDF Security and Signing
+pyHanko==0.26.0
+pyhanko-certvalidator==0.26.8
+pypdf==5.4.0
+cryptography==44.0.3
+asn1crypto==1.5.1
+oscrypto==1.3.0
+defusedxml==0.7.1
+PyYAML==6.0.2
+qrcode==8.2
+tzlocal==5.3.1
+tzdata==2025.2
+uritools==5.0.0
+click==8.1.8
+colorama==0.4.6
+cffi==1.17.1
+pycparser==2.22
+
+# Payment Processing
+stripe==3.0.0
+
+# HTTP and API
+requests==2.32.3
+urllib3==2.4.0
+certifi==2025.4.26
+charset-normalizer==3.4.2
+idna==3.10
+chardet==5.2.0
+
+# Configuration
+python-decouple==3.6
+
+# RTL and Arabic Text Support
+arabic-reshaper==3.0.0
+python-bidi==0.6.6

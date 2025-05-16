@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load merchandise_filters %}
+
+{% block title %}{{ product.name }} | Merchandise{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'portal:home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'merchandise:merchandise_home' %}">Merchandise</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'merchandise:merchandise_by_category' product.category.slug %}">{{ product.category.name }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="product-image-wrapper position-relative">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded product-main-image">
+                {% else %}
+                <img src="{% static 'img/no-image.jpg' %}" alt="No image" class="img-fluid rounded product-main-image" onerror="this.src='https://via.placeholder.com/600x600?text=No+Image'">
+                {% endif %}
+                
+                {% if product.is_new %}
+                <div class="product-badge bg-success text-white">New</div>
+                {% endif %}
+                {% if product.on_sale %}
+                <div class="product-badge bg-danger text-white sale-badge">Sale</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="product-info">
+                <h1 class="mb-3">{{ product.name }}</h1>
+                
+                <div class="mb-4">
+                    <span class="badge bg-primary">{{ product.category.name }}</span>
+                    {% if product.stock > 0 %}
+                    <span class="badge bg-success">In Stock ({{ product.stock }})</span>
+                    {% elif product.stock == 0 %}
+                    <span class="badge bg-danger">Out of Stock</span>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4 product-price">
+                    {% if product.on_sale %}
+                    <span class="sale-price">₹{{ product.sale_price|floatformat:2 }}</span>
+                    <span class="original-price"><s>₹{{ product.price|floatformat:2 }}</s></span>
+                    <span class="discount-badge">
+                        {% with savings=product.price|sub:product.sale_price %}
+                        {% with percentage=savings|div:product.price|mul:100|floatformat:0 %}
+                        Save {{ percentage }}%
+                        {% endwith %}
+                        {% endwith %}
+                    </span>
+                    {% else %}
+                    <span class="regular-price">₹{{ product.price|floatformat:2 }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4">
+                    <p>{{ product.description }}</p>
+                </div>
+                
+                <div class="product-actions mb-4">
+                    {% if product.stock > 0 %}
+                    <form action="{% url 'cart:merchandise_add' product.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity:</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    </form>
+                    {% endif %}
+                </div>
+                
+                <div class="product-meta">
+                    <div class="mb-2">
+                        <strong>SKU:</strong> MERCH-{{ product.id }}
+                    </div>
+                    <div class="mb-2">
+                        <strong>Availability:</strong> 
+                        {% if product.stock > 5 %}
+                        <span class="text-success">In Stock</span>
+                        {% elif product.stock <= 5 and product.stock > 0 %}
+                        <span class="text-warning">Low Stock ({{ product.stock }} left)</span>
+                        {% else %}
+                        <span class="text-danger">Out of Stock</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="product-share mt-4">
+                    <span class="me-3">Share:</span>
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-pinterest"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="productTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Description</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="shipping-tab" data-bs-toggle="tab" data-bs-target="#shipping" type="button" role="tab" aria-controls="shipping" aria-selected="false">Shipping & Returns</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="productTabsContent">
+                        <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                            <h5>Product Description</h5>
+                            <p>{{ product.description }}</p>
+                        </div>
+                        <div class="tab-pane fade" id="shipping" role="tabpanel" aria-labelledby="shipping-tab">
+                            <h5>Shipping Information</h5>
+                            <p>We ship all merchandise within 1-2 business days after receiving your order.</p>
+                            <ul>
+                                <li>Standard Shipping: 3-5 business days</li>
+                                <li>Express Shipping: 1-2 business days</li>
+                            </ul>
+                            
+                            <h5 class="mt-4">Return Policy</h5>
+                            <p>If you're not completely satisfied with your purchase, you can return it within 30 days for a full refund or exchange.</p>
+                            <p>To be eligible for a return, your item must be unused and in the same condition that you received it. It must also be in the original packaging.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-main-image {
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        max-height: 500px;
+        width: 100%;
+        object-fit: cover;
+    }
+    
+    .product-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    
+    .sale-badge {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .product-price {
+        font-size: 1.5rem;
+    }
+    
+    .regular-price, .sale-price {
+        font-weight: bold;
+    }
+    
+    .sale-price {
+        color: #dc3545;
+    }
+    
+    .original-price {
+        color: #6c757d;
+        font-size: 1.2rem;
+        margin-left: 10px;
+    }
+    
+    .discount-badge {
+        background-color: #dc3545;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        margin-left: 10px;
+    }
+    
+    .quantity-selector {
+        width: 120px;
+    }
+    
+    .quantity-selector input {
+        height: 38px;
+    }
+    
+    .social-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #f8f9fa;
+        color: #495057;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .social-icon:hover {
+        background-color: #5E3A1A;
+        color: white;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Quantity selector
+        const minusBtn = document.querySelector('.quantity-minus');
+        const plusBtn = document.querySelector('.quantity-plus');
+        const quantityInput = document.querySelector('#quantity');
+        
+        minusBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            if (value > 1) {
+                quantityInput.value = value - 1;
+            }
+        });
+        
+        plusBtn.addEventListener('click', function() {
+            let value = parseInt(quantityInput.value);
+            let max = parseInt(quantityInput.getAttribute('max'));
+            if (value < max) {
+                quantityInput.value = value + 1;
+            }
+        });
+        
+        // Add to cart button
+        const addToCartBtn = document.querySelector('#add-to-cart-btn');
+        addToCartBtn.addEventListener('click', function() {
+            alert('This feature will be implemented when the cart functionality is integrated.');
+        });
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            {% if order and shipment %}
+            <div class="card shadow mb-4">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">Order Tracking</h2>
+                    
+                    <div class="order-info mb-4">
+                        <h4>Order Details</h4>
+                        <p><strong>Order ID:</strong> #{{ order.id }}</p>
+                        <p><strong>Order Date:</strong> {{ order.created|date:"F d, Y" }}</p>
+                        <p><strong>Total Items:</strong> {{ order.totalbook }}</p>
+                        <p><strong>Total Amount:</strong> ₹{{ order.payable }}</p>
+                    </div>
+
+                    <div class="tracking-status mb-4">
+                        <h4>Current Status</h4>
+                        <div class="alert alert-info">
+                            <strong>{{ current_status|title }}</strong>
+                            <p class="mb-0">Last updated: {{ shipment.updated_at|date:"F d, Y H:i" }}</p>
+                        </div>
+                    </div>
+
+                    <div class="tracking-progress">
+                        <h4>Order Progress</h4>
+                        <div class="progress-tracker">
+                            {% for step in steps %}
+                            <div class="step {% if step in completed_steps %}completed{% endif %} {% if step == current_status %}current{% endif %}">
+                                <div class="circle"></div>
+                                <div class="label">{{ step }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card shadow">
+                <div class="card-body p-4 text-center">
+                    <h3>No Order Found</h3>
+                    <p class="text-muted">We couldn't find an order with the provided ID.</p>
+                    <a href="{% url 'order:track_order_input' %}" class="btn btn-primary">Try Again</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.progress-tracker {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-top: 30px;
+}
+
+.step {
+    text-align: center;
+    flex: 1;
+    position: relative;
+}
+
+.circle {
+    height: 20px;
+    width: 20px;
+    background-color: #e9ecef;
+    border-radius: 50%;
+    margin: auto;
+    z-index: 2;
+}
+
+.step.completed .circle {
+    background-color: #28a745;
+}
+
+.step.current .circle {
+    background-color: #007bff;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #007bff;
+}
+
+.step::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: -50%;
+    height: 4px;
+    width: 100%;
+    background-color: #e9ecef;
+    z-index: 1;
+}
+
+.step:first-child::before {
+    display: none;
+}
+
+.step.completed::before {
+    background-color: #28a745;
+}
+
+.label {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.step.completed .label,
+.step.current .label {
+    color: #212529;
+    font-weight: 500;
+}
+</style>
+{% endblock %}

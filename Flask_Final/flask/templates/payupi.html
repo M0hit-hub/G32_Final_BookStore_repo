@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Page - Online Bookstore</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #f0f8ff, #e6e6fa);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .payment-container {
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .payment-container h2 {
+      margin: 0;
+      color: #333;
+    }
+
+    .payment-container form {
+      margin-top: 20px;
+    }
+
+    h3 {
+      text-align: center;
+    }
+
+    img {
+      height: auto;
+      max-width: 80%;
+      margin: 10px auto;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .btn-submit {
+      background-color: purple;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-submit:hover {
+      background-color: purple;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .success {
+      color: green;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    .modal-content p {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .modal-content button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      background-color: purple;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .modal-content button:hover {
+      background-color: purple;
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-container">
+    <h2>UPI Payment</h2>
+    <p>Enter your UPI details to complete the payment.</p>
+    <form id="payment-form">
+      <div class="form-group">
+        <label for="upi-id">UPI ID</label>
+        <input type="text" id="upi-id" placeholder="example@upi" required style="width: 380px;">
+        <div id="upi-error" class="error"></div>
+      </div>
+      <h3>OR</h3>
+      <p>Scan The QR Code</p>
+      <img 
+        src="https://media-cldnry.s-nbcnews.com/image/upload/t_fit-1240w,f_auto,q_auto:best/MSNBC/Components/Photo/_new/110322-qr-code-hmed-425p.jpg" 
+        alt="Scan this QR Code for payment" 
+        title="Scan to pay">
+      <button type="button" class="btn-submit" onclick="processPayment()">Pay Now</button>
+      <div id="payment-status" class="success"></div>
+    </form>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <p>Your order has been placed successfully. Thank you for visiting our website.</p>
+      <a href="{{url_for('home')}}"><button onclick="closeModal()">Close</button></a>
+    </div>
+  </div>
+
+  <script>
+    // Function to validate the UPI ID
+    function isValidUPI(upiID) {
+      const upiPattern = /^[\w.-]+@[\w]+$/; // UPI ID format: user@bank
+      return upiPattern.test(upiID);
+    }
+
+    // Function to handle payment process
+    function processPayment() {
+      const upiID = document.getElementById("upi-id").value.trim();
+      const errorElement = document.getElementById("upi-error");
+      const statusElement = document.getElementById("payment-status");
+
+      // Reset previous messages
+      errorElement.textContent = "";
+      statusElement.textContent = "";
+
+      // Validate UPI ID
+      if (!upiID) {
+        errorElement.textContent = "Please enter a valid UPI ID.";
+        return;
+      }
+      if (!isValidUPI(upiID)) {
+        errorElement.textContent = "Invalid UPI ID. Example: user@bank";
+        return;
+      }
+
+      // Simulate payment processing
+      statusElement.textContent = "Processing payment...";
+      setTimeout(() => {
+        statusElement.textContent = "Payment successful!";
+        showModal();
+      }, 2000);
+    }
+
+    // Function to show modal
+    function showModal() {
+      const modal = document.getElementById("modal");
+      modal.style.display = "flex"; // Show the modal
+    }
+
+    // Function to close modal
+    function closeModal() {
+      const modal = document.getElementById("modal");
+      modal.style.display = "none"; // Hide the modal
+    }
+  </script>
+</body>
+</html>

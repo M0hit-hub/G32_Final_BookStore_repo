@@ -1,0 +1,1 @@
+- All prices and currency displays are now set to rupees (₹) across both Django and Flask modules. 

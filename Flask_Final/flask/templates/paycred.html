@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credit Card Payment - Online Bookstore</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #f0f8ff, #e6e6fa);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .payment-container {
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .payment-container h2 {
+      color: #333;
+    }
+
+    .payment-container form {
+      margin-top: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .btn-submit {
+      background-color: purple;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-submit:hover {
+      background-color: purple;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .success {
+      color: green;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    .modal-content p {
+      font-size: 18px;
+    }
+
+    .modal-content button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      background-color: purple;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .modal-content button:hover {
+      background-color: purple;
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-container">
+    <h2>Credit Card Payment</h2>
+    <p>Enter your credit card details to complete the payment.</p>
+    <form id="payment-form">
+      <div class="form-group">
+        <label for="card-number">Card Number</label>
+        <input type="text" id="card-number" maxlength="16" placeholder="1234 5678 9012 3456" required style="width: 380px;">
+        <div id="card-error" class="error"></div>
+      </div>
+      <div class="form-group">
+        <label for="cardholder-name">Cardholder Name</label>
+        <input type="text" id="cardholder-name" placeholder="John Doe" required style="width: 380px;">
+      </div>
+      <div class="form-group">
+        <label for="expiry-date">Expiry Date</label>
+        <input type="month" id="expiry-date" required style="width: 380px;">
+      </div>
+      <div class="form-group">
+        <label for="cvv">CVV</label>
+        <input type="password" id="cvv" maxlength="3" placeholder="123" required style=" width: 380px;">
+        <div id="cvv-error" class="error"></div>
+      </div>
+      <button type="button" class="btn-submit" onclick="processPayment()">Pay Now</button>
+      <div id="payment-status" class="success"></div>
+    </form>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <p>Your payment has been processed successfully. Thank you for shopping with us!</p>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    function isValidCardNumber(number) {
+      const cardPattern = /^\d{16}$/; // Validates a 16-digit card number
+      return cardPattern.test(number);
+    }
+
+    function isValidCVV(cvv) {
+      const cvvPattern = /^\d{3}$/; // Validates a 3-digit CVV
+      return cvvPattern.test(cvv);
+    }
+
+    function processPayment() {
+      const cardNumber = document.getElementById("card-number").value.trim();
+      const cardholderName = document.getElementById("cardholder-name").value.trim();
+      const expiryDate = document.getElementById("expiry-date").value;
+      const cvv = document.getElementById("cvv").value.trim();
+
+      const cardError = document.getElementById("card-error");
+      const cvvError = document.getElementById("cvv-error");
+      const paymentStatus = document.getElementById("payment-status");
+
+      // Reset error messages
+      cardError.textContent = "";
+      cvvError.textContent = "";
+      paymentStatus.textContent = "";
+
+      // Validate inputs
+      if (!isValidCardNumber(cardNumber)) {
+        cardError.textContent = "Invalid card number. Must be 16 digits.";
+        return;
+      }
+
+      if (!isValidCVV(cvv)) {
+        cvvError.textContent = "Invalid CVV. Must be 3 digits.";
+        return;
+      }
+
+      if (!cardholderName || !expiryDate) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      // Simulate payment processing
+      paymentStatus.textContent = "Processing payment...";
+      setTimeout(() => {
+        paymentStatus.textContent = "Payment successful!";
+        showModal();
+      }, 2000);
+    }
+
+    function showModal() {
+      const modal = document.getElementById("modal");
+      modal.style.display = "flex";
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("modal");
+      modal.style.display = "none";
+    }
+  </script>
+</body>
+</html>

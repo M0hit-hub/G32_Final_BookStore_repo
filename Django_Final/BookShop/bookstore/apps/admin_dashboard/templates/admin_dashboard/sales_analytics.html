@@ -1,0 +1,379 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block title %}Sales Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-stat {
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .dashboard-stat .icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+    
+    .dashboard-stat .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .dashboard-stat .stat-label {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6c757d;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 350px;
+        margin-bottom: 30px;
+    }
+    
+    .filter-bar {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    
+    .filter-buttons a.btn {
+        margin-right: 8px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 8px 22px;
+        letter-spacing: 0.5px;
+    }
+    .filter-buttons a.btn-primary {
+        background: linear-gradient(90deg, #6a4f2b 0%, #a67c52 100%);
+        color: #fff;
+        border: none;
+    }
+    .filter-buttons a.btn-outline-primary {
+        border: 2px solid #a67c52;
+        color: #a67c52;
+        background: #fff;
+    }
+    .filter-buttons a.btn:hover, .filter-buttons a.btn:focus {
+        box-shadow: 0 4px 16px rgba(166,124,82,0.15);
+        opacity: 0.92;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>{{ title }}</h2>
+        <div class="filter-buttons">
+            <a href="{% url 'admin_dashboard:sales_analytics' %}?period=7days" class="btn {% if period == '7days' %}btn-primary{% else %}btn-outline-primary{% endif %}">Last 7 Days</a>
+            <a href="{% url 'admin_dashboard:sales_analytics' %}?period=30days" class="btn {% if period == '30days' %}btn-primary{% else %}btn-outline-primary{% endif %}">Last 30 Days</a>
+            <a href="{% url 'admin_dashboard:sales_analytics' %}?period=year" class="btn {% if period == 'year' %}btn-primary{% else %}btn-outline-primary{% endif %}">Last Year</a>
+            <a href="{% url 'admin_dashboard:sales_analytics' %}?period=all" class="btn {% if period == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">All Time</a>
+        </div>
+    </div>
+</div>
+
+<!-- Overview Stats -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="dashboard-stat">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-value">₹{{ total_revenue|floatformat:2 }}</div>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+                <div class="icon text-success">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="dashboard-stat">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-value">{{ total_orders }}</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="icon text-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="dashboard-stat">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-value">₹{{ book_revenue|floatformat:2 }}</div>
+                    <div class="stat-label">Book Revenue</div>
+                </div>
+                <div class="icon text-info">
+                    <i class="fas fa-book"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="dashboard-stat">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-value">₹{{ merchandise_revenue|floatformat:2 }}</div>
+                    <div class="stat-label">Merchandise Revenue</div>
+                </div>
+                <div class="icon text-warning">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Sales Trend</h3>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="salesTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Revenue Distribution</h3>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="revenuePieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Products -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Top Selling Books</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Book</th>
+                                <th class="text-end">Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in top_books %}
+                            <tr>
+                                <td>{{ book.book__name }}</td>
+                                <td class="text-end">₹{{ book.total|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center">No data available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Top Selling Merchandise</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-end">Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in top_merchandise %}
+                            <tr>
+                                <td>{{ product.merchandise__name }}</td>
+                                <td class="text-end">₹{{ product.total|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center">No data available</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Status -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Order Status</h3>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="orderStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sales Trend Chart
+        const salesTrendCtx = document.getElementById('salesTrendChart').getContext('2d');
+        const salesTrendChart = new Chart(salesTrendCtx, {
+            type: 'line',
+            data: {
+                labels: {{ months|safe }},
+                datasets: [{
+                    label: 'Sales (₹)',
+                    data: {{ sales_values|safe }},
+                    backgroundColor: 'rgba(94, 58, 26, 0.2)',
+                    borderColor: 'rgba(94, 58, 26, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(94, 58, 26, 1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹' + value;
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '₹' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Revenue Distribution Pie Chart
+        const revenuePieCtx = document.getElementById('revenuePieChart').getContext('2d');
+        const revenuePieChart = new Chart(revenuePieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Books', 'Merchandise'],
+                datasets: [{
+                    data: [{{ book_revenue }}, {{ merchandise_revenue }}],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `₹${value.toFixed(2)} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Order Status Chart
+        const orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
+        const orderStatusChart = new Chart(orderStatusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Paid', 'Pending'],
+                datasets: [{
+                    data: [{{ paid_orders }}, {{ pending_orders }}],
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.7)',
+                        'rgba(255, 193, 7, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(40, 167, 69, 1)',
+                        'rgba(255, 193, 7, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${context.label}: ${value} orders (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %} 

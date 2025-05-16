@@ -1,0 +1,18 @@
+<form class="admin-modal-form" method="post" action="{% url 'admin_dashboard:book_edit_modal' book.id %}">
+    {% csrf_token %}
+    <div class="modal-header"><h5 class="modal-title">Edit Book</h5></div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Name</label>
+            <input name="name" class="form-control" value="{{ book.name }}">
+        </div>
+        <div class="form-group">
+            <label>Price</label>
+            <input name="price" class="form-control" value="{{ book.price }}">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-secondary btn-cancel-modal" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form> 

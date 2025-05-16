@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Merchandise | Bytes & Brew{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold mb-0">Merchandise</h1>
+            <p class="lead text-muted">Discover our exclusive collection of coffee, apparel, and more.</p>
+        </div>
+        <div class="col-md-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb float-md-end">
+                    <li class="breadcrumb-item"><a href="{% url 'portal:home' %}">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Merchandise</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Sidebar with categories -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Categories</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'merchandise:merchandise_home' %}" class="list-group-item list-group-item-action {% if not category %}active{% endif %}">
+                        All Items
+                    </a>
+                    {% for c in categories %}
+                    <a href="{{ c.get_absolute_url }}" class="list-group-item list-group-item-action {% if category.slug == c.slug %}active{% endif %}">
+                        {{ c.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            {% if sale_products %}
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Sale Items</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for product in sale_products|slice:":5" %}
+                    <a href="{{ product.get_absolute_url }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        {{ product.name }}
+                        <span class="badge bg-danger rounded-pill">₹{{ product.sale_price }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Main product display -->
+        <div class="col-md-9">
+            {% if category %}
+            <div class="alert alert-info mb-4">
+                Showing {{ category.name }} items
+            </div>
+            {% endif %}
+            
+            {% if new_products and not category %}
+            <div class="mb-5">
+                <h2 class="mb-4">New Arrivals</h2>
+                <div class="row">
+                    {% for product in new_products|slice:":4" %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 product-card">
+                            <div class="position-relative">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                                {% else %}
+                                <img src="{% static 'img/placeholder.png' %}" class="card-img-top" alt="No image">
+                                {% endif %}
+                                <div class="product-badge bg-success text-white">New</div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text text-muted">{{ product.category.name }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="price-box">
+                                        <span class="price">₹{{ product.price }}</span>
+                                    </div>
+                                    <a href="{{ product.get_absolute_url }}" class="btn btn-outline-primary btn-sm">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="mb-4">
+                <h2 class="mb-4">{% if category %}{{ category.name }}{% else %}All Items{% endif %}</h2>
+                <div class="row">
+                    {% for product in products %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 product-card">
+                            <div class="position-relative">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                                {% else %}
+                                <img src="{% static 'img/placeholder.png' %}" class="card-img-top" alt="No image">
+                                {% endif %}
+                                {% if product.is_new %}
+                                <div class="product-badge bg-success text-white">New</div>
+                                {% endif %}
+                                {% if product.on_sale %}
+                                <div class="product-badge bg-danger text-white">Sale</div>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text text-muted">{{ product.category.name }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="price-box">
+                                        {% if product.on_sale %}
+                                        <span class="price-sale">₹{{ product.sale_price }}</span>
+                                        <span class="price-original text-muted"><s>₹{{ product.price }}</s></span>
+                                        {% else %}
+                                        <span class="price">₹{{ product.price }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <a href="{{ product.get_absolute_url }}" class="btn btn-outline-primary btn-sm">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-warning">
+                            No products available in this category.
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-card {
+        border: 1px solid #f0f0f0;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        height: 100%;
+    }
+    
+    .product-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .product-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        z-index: 10;
+    }
+    
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+        /* Removed transition for better performance */
+    }
+    
+    /* Removed hover effect that scales the image to prevent layout shifts */
+    
+    .price {
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .price-sale {
+        font-weight: bold;
+        color: #dc3545;
+    }
+    
+    .price-original {
+        font-size: 0.9rem;
+        margin-left: 5px;
+    }
+</style>
+{% endblock %} 

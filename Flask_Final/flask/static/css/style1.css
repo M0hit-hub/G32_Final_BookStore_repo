@@ -1,0 +1,366 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
+/*---navbar---*/
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    width: auto;
+    height: auto;
+    background: #000000;
+}
+
+.navbar img {
+    height: 130px;
+    padding: 20px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+}
+
+.navmenu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+}
+
+
+
+
+
+
+
+.dropbtn {
+    background-color: #000000;
+    color: white;
+    padding: 0px 8px;
+    margin-right: 30px;
+    font-size: 18px;
+    border: none;
+    font-family: "Montserrat", sans-serif;
+}
+
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    font-size: 15px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    opacity: 0;
+    /* Initially, it is invisible */
+    transform: translateY(-20px);
+    /* Position it above the dropdown button */
+    pointer-events: none;
+    /* Prevent interaction when hidden */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* Slide and fade animation */
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    opacity: 1;
+    /* Make it visible */
+    transform: translateY(0);
+    /* Slide it down to its natural position */
+    pointer-events: auto;
+    /* Enable interaction when the menu is visible */
+}
+
+
+
+
+
+
+
+.navmenu li {
+    display: inline-block;
+    margin-right: 30px;
+}
+
+.navmenu li a {
+    text-decoration: none;
+    color: #ffffff;
+    margin-right: 20px;
+    padding: 0px 10px;
+    font-size: 18px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.navmenu li select {
+    color: #000000;
+    font-size: 18px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.navmenu li select option {
+    color: #000000;
+    font-family: "Montserrat", sans-serif;
+}
+
+.navmenu .cart i {
+    color: #ffffff;
+    position: relative;
+    right: 30px;
+    background-image: linear-gradient(violet, blue);
+    padding: 10px;
+    border-radius: 50px;
+}
+
+.books-slide {
+    margin-top: 8px;
+}
+
+
+/* search-content */
+
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Search Header Styling */
+.search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 8px 15px rgba(160, 118, 54, 0.641);
+    animation: fadeIn 1s ease-in-out;
+}
+
+
+/* Input Fields */
+.search-input,
+.category-dropdown,
+.author-dropdown {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 30px;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    background-color: #fff;
+    width: 25%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+
+.search-input:focus,
+.category-dropdown:focus,
+.author-dropdown:focus {
+    border-color: #2196f3;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+    outline: none;
+}
+
+/* Search Button */
+.find-book-btn {
+    padding: 12px 35px;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgb(255, 255, 255);
+    background-color: #9c6615;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.find-book-btn:hover {
+    background-color: #413620;
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .search-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .search-input,
+    .category-dropdown,
+    .author-dropdown,
+    .find-book-btn {
+        width: 100%;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+main {
+    background-color: #cdd1de
+}
+
+h2.new-releases {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    color: #ff6b6b;
+    background-color: #9f7833;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+/* Book List */
+.book-list {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+/* Individual Book Items */
+.book-item {
+    background: linear-gradient(135deg, #fff0f5, #f0fff0);
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0px 10px 30px rgba(151, 83, 23, 0.623);
+    width: 22%;
+    margin-bottom: 30px;
+    transition: box-shadow 0.4s ease, transform 0.3s ease;
+}
+
+.book-item:hover {
+    box-shadow: 0px 16px 40px rgba(255, 119, 0, 0.658);
+    transform: translateY(-7px);
+}
+
+/* Book Cover Image */
+.book-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0px 4px 12px rgba(255, 160, 122, 0.2);
+}
+
+.book-item:hover img {
+    transform: scale(1.1);
+    box-shadow: 0px 8px 20px rgba(255, 160, 122, 0.3);
+}
+
+/* Book Title */
+.book-item h3 {
+    font-size: 1.6em;
+    margin: 15px 0;
+    color: #ff6f61;
+    font-weight: bold;
+    background: linear-gradient(90deg, #9c6615, #9f7833);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* Price Styling */
+.book-item .price {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #ab4b4b;
+    margin: 10px 0;
+}
+
+/* Buttons */
+.book-item button {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    margin: 10px 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Detail Button */
+.book-item .detail-btn {
+    background: linear-gradient(45deg, #413620, #ffd791);
+    color: #fff;
+}
+
+.book-item .detail-btn:hover {
+    background-color: #3b82f6;
+    transform: translateY(-3px);
+}
+
+/* Buy Button */
+.book-item .buy-btn {
+    background: linear-gradient(45deg, #413620, #ffd791);
+    color: #fff;
+}
+
+.book-item .buy-btn:hover {
+    background-color: #218838;
+    transform: translateY(-3px);
+}
+
+/* Responsive Styling */
+@media (max-width: 1200px) {
+    .book-item {
+        width: 30%;
+    }
+}
+
+@media (max-width: 768px) {
+    .book-item {
+        width: 45%;
+    }
+}
+
+@media (max-width: 576px) {
+    .book-item {
+        width: 100%;
+    }
+}
+
+/* footer */

@@ -1,0 +1,794 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block title %}Product Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .search-control {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    
+    .search-form {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .search-input {
+        flex: 1;
+        min-width: 200px;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+    
+    .search-select {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        background-color: white;
+    }
+    
+    .search-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .search-btn:hover {
+        background-color: #0069d9;
+    }
+    
+    .section-title {
+        margin: 1.5rem 0 1rem;
+        padding-left: 15px;
+        border-left: 4px solid #007bff;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    
+    .product-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .product-img {
+        height: 180px;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    
+    .product-img img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    
+    .product-info {
+        padding: 1rem;
+    }
+    
+    .product-name {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .product-meta {
+        color: #6c757d;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .product-price {
+        font-weight: 700;
+        color: #28a745;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .product-actions {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #e9ecef;
+        padding-top: 0.75rem;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .status-active {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .status-inactive {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+    }
+    
+    .table-container {
+        margin-bottom: 1.5rem;
+        overflow-x: auto;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    thead {
+        background-color: #f8f9fa;
+    }
+    
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    th {
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        border-radius: 4px;
+    }
+    
+    .btn-edit {
+        background-color: #17a2b8;
+        color: white;
+    }
+    
+    .btn-view {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin: 1.5rem 0;
+    }
+    
+    .pagination a, .pagination span {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        color: #007bff;
+        text-decoration: none;
+        transition: background-color 0.2s;
+    }
+    
+    .pagination a:hover {
+        background-color: #e9ecef;
+    }
+    
+    .pagination .current {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    
+    .stock-low {
+        color: #dc3545;
+        font-weight: bold;
+    }
+    
+    .stock-medium {
+        color: #ffc107;
+        font-weight: bold;
+    }
+    
+    .stock-high {
+        color: #28a745;
+    }
+    
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
+    }
+    
+    .modal-backdrop.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .quick-edit-modal {
+        background-color: white;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        transform: translateY(-20px);
+        transition: transform 0.3s;
+    }
+    
+    .modal-backdrop.show .quick-edit-modal {
+        transform: translateY(0);
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #e9ecef;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6c757d;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+    
+    .full-width {
+        grid-column: 1 / -1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="dashboard-header">
+        <h2>Product Management</h2>
+        <div class="action-buttons">
+            <a href="/admin/store/book/add/" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Add Book
+            </a>
+            <a href="/admin/merchandise/product/add/" class="btn btn-success">
+                <i class="fas fa-plus me-1"></i> Add Merchandise
+            </a>
+            <button class="btn btn-secondary" id="exportBtn">
+                <i class="fas fa-file-export me-1"></i> Export
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="search-control">
+    <form method="get" class="search-form">
+        <input type="text" name="search" placeholder="Search by product name" class="search-input" value="{{ search_query }}">
+        <select name="type" class="search-select">
+            <option value="all" {% if product_type == 'all' %}selected{% endif %}>All Products</option>
+            <option value="book" {% if product_type == 'book' %}selected{% endif %}>Books Only</option>
+            <option value="merchandise" {% if product_type == 'merchandise' %}selected{% endif %}>Merchandise Only</option>
+        </select>
+        <select name="status" class="search-select">
+            <option value="all">All Status</option>
+            <option value="active" {% if status == 'active' %}selected{% endif %}>Active Only</option>
+            <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive Only</option>
+        </select>
+        <select name="stock" class="search-select">
+            <option value="all">All Stock Levels</option>
+            <option value="low" {% if stock_filter == 'low' %}selected{% endif %}>Low Stock</option>
+            <option value="out" {% if stock_filter == 'out' %}selected{% endif %}>Out of Stock</option>
+        </select>
+        <button type="submit" class="search-btn">
+            <i class="fas fa-search me-1"></i> Search
+        </button>
+    </form>
+</div>
+
+<div class="row">
+    <!-- Statistics Cards -->
+    <div class="col-md-3 mb-4">
+        <div class="card stats-card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ total_books|default:"0" }}</div>
+                        <div class="stat-label">Total Books</div>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card stats-card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ total_merchandise|default:"0" }}</div>
+                        <div class="stat-label">Total Merchandise</div>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card stats-card bg-warning text-dark">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ low_stock_count|default:"0" }}</div>
+                        <div class="stat-label">Low Stock Items</div>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card stats-card bg-danger text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-value">{{ out_of_stock_count|default:"0" }}</div>
+                        <div class="stat-label">Out of Stock</div>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if book_page_obj and product_type != 'merchandise' %}
+<h4 class="section-title"><i class="fas fa-book me-2"></i>Books</h4>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Writer</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in book_page_obj %}
+            <tr>
+                <td>{{ book.id }}</td>
+                <td>{{ book.name }}</td>
+                <td>{{ book.category.name }}</td>
+                <td>{{ book.writer.name }}</td>
+                <td>₹{{ book.price }}</td>
+                <td class="{% if book.stock == 0 %}stock-low{% elif book.stock < 5 %}stock-medium{% else %}stock-high{% endif %}">
+                    {{ book.stock }}
+                </td>
+                <td>{{ book.created|date:"M d, Y" }}</td>
+                <td>
+                    {% if book.status == 1 %}
+                    <span class="status-badge status-active">Active</span>
+                    {% else %}
+                    <span class="status-badge status-inactive">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <a href="{% url 'store:book' id=book.id %}" class="btn btn-sm btn-view" title="View">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <button class="btn btn-sm btn-edit quick-edit-btn" 
+                                data-id="{{ book.id }}"
+                                data-name="{{ book.name }}"
+                                data-price="{{ book.price }}"
+                                data-stock="{{ book.stock }}"
+                                data-status="{{ book.status }}"
+                                data-type="book"
+                                title="Quick Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <a href="{% url 'store:delete_book' book.id %}" class="btn btn-sm btn-delete" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9">No books found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    {% if book_page_obj.has_previous %}
+        <a href="?book_page=1{% if search_query %}&search={{ search_query }}{% endif %}&type={{ product_type }}">&laquo; First</a>
+        <a href="?book_page={{ book_page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}&type={{ product_type }}">Previous</a>
+    {% endif %}
+    
+    <span class="current">
+        Page {{ book_page_obj.number }} of {{ book_page_obj.paginator.num_pages }}
+    </span>
+    
+    {% if book_page_obj.has_next %}
+        <a href="?book_page={{ book_page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}&type={{ product_type }}">Next</a>
+        <a href="?book_page={{ book_page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}&type={{ product_type }}">Last &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if product_page_obj and product_type != 'book' %}
+<h4 class="section-title"><i class="fas fa-tshirt me-2"></i>Merchandise</h4>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in product_page_obj %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.category.name }}</td>
+                <td>₹{{ product.price }}</td>
+                <td class="{% if product.stock == 0 %}stock-low{% elif product.stock < 5 %}stock-medium{% else %}stock-high{% endif %}">
+                    {{ product.stock }}
+                </td>
+                <td>{{ product.created|date:"M d, Y" }}</td>
+                <td>
+                    {% if product.available %}
+                    <span class="status-badge status-active">Available</span>
+                    {% else %}
+                    <span class="status-badge status-inactive">Unavailable</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <a href="/merchandise/product/{{ product.id }}" class="btn btn-sm btn-view" title="View">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <button class="btn btn-sm btn-edit quick-edit-btn"
+                                data-id="{{ product.id }}"
+                                data-name="{{ product.name }}"
+                                data-price="{{ product.price }}"
+                                data-stock="{{ product.stock }}"
+                                data-status="{% if product.available %}1{% else %}0{% endif %}"
+                                data-type="merchandise"
+                                title="Quick Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <a href="/admin/merchandise/product/{{ product.id }}/delete/" class="btn btn-sm btn-delete" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">No merchandise products found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    {% if product_page_obj.has_previous %}
+        <a href="?product_page=1{% if search_query %}&search={{ search_query }}{% endif %}&type={{ product_type }}">&laquo; First</a>
+        <a href="?product_page={{ product_page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}&type={{ product_type }}">Previous</a>
+    {% endif %}
+    
+    <span class="current">
+        Page {{ product_page_obj.number }} of {{ product_page_obj.paginator.num_pages }}
+    </span>
+    
+    {% if product_page_obj.has_next %}
+        <a href="?product_page={{ product_page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}&type={{ product_type }}">Next</a>
+        <a href="?product_page={{ product_page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}&type={{ product_type }}">Last &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Quick Edit Modal -->
+<div class="modal-backdrop" id="quickEditModal">
+    <div class="quick-edit-modal">
+        <div class="modal-header">
+            <h4 id="modalTitle">Quick Edit Product</h4>
+            <button type="button" class="close-modal" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="quickEditForm" method="post" action="{% url 'admin_dashboard:quick_edit_product' %}">
+                {% csrf_token %}
+                <input type="hidden" id="productId" name="product_id">
+                <input type="hidden" id="productType" name="product_type">
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="productName" class="form-label">Product Name</label>
+                        <input type="text" id="productName" name="name" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productPrice" class="form-label">Price (₹)</label>
+                        <input type="number" id="productPrice" name="price" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productStock" class="form-label">Stock</label>
+                        <input type="number" id="productStock" name="stock" class="form-control" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productStatus" class="form-label">Status</label>
+                        <select id="productStatus" name="status" class="form-control">
+                            <option value="1">Active/Available</option>
+                            <option value="0">Inactive/Unavailable</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="cancelEdit">Cancel</button>
+            <button type="submit" form="quickEditForm" class="btn btn-primary">Save Changes</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Quick Edit Modal Functionality
+        const modal = document.getElementById('quickEditModal');
+        const quickEditButtons = document.querySelectorAll('.quick-edit-btn');
+        const closeModalBtn = document.getElementById('closeModal');
+        const cancelEditBtn = document.getElementById('cancelEdit');
+        
+        // Form Fields
+        const productIdField = document.getElementById('productId');
+        const productTypeField = document.getElementById('productType');
+        const productNameField = document.getElementById('productName');
+        const productPriceField = document.getElementById('productPrice');
+        const productStockField = document.getElementById('productStock');
+        const productStatusField = document.getElementById('productStatus');
+        const modalTitle = document.getElementById('modalTitle');
+        
+        // Open Modal with Product Data
+        quickEditButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                const price = this.getAttribute('data-price');
+                const stock = this.getAttribute('data-stock');
+                const status = this.getAttribute('data-status');
+                const type = this.getAttribute('data-type');
+                
+                // Set form values
+                productIdField.value = id;
+                productTypeField.value = type;
+                productNameField.value = name;
+                productPriceField.value = price;
+                productStockField.value = stock;
+                productStatusField.value = status;
+                
+                // Update modal title based on product type
+                if (type === 'book') {
+                    modalTitle.textContent = 'Quick Edit Book';
+                } else {
+                    modalTitle.textContent = 'Quick Edit Merchandise';
+                }
+                
+                // Show modal
+                modal.classList.add('show');
+            });
+        });
+        
+        // Close Modal
+        function closeModal() {
+            modal.classList.remove('show');
+        }
+        
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelEditBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Export functionality
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            // Create dropdown menu for export options
+            const btn = this;
+            const rect = btn.getBoundingClientRect();
+            
+            // Check if dropdown already exists
+            let dropdown = document.getElementById('exportDropdown');
+            if (dropdown) {
+                dropdown.remove();
+                return;
+            }
+            
+            // Create dropdown
+            dropdown = document.createElement('div');
+            dropdown.id = 'exportDropdown';
+            dropdown.style.position = 'absolute';
+            dropdown.style.top = (rect.bottom + 5) + 'px';
+            dropdown.style.right = (window.innerWidth - rect.right) + 'px';
+            dropdown.style.backgroundColor = 'white';
+            dropdown.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            dropdown.style.borderRadius = '4px';
+            dropdown.style.padding = '5px 0';
+            dropdown.style.zIndex = '100';
+            
+            // Export options
+            const options = [
+                { label: 'Export as Excel', icon: 'fas fa-file-excel', format: 'excel' },
+                { label: 'Export as CSV', icon: 'fas fa-file-csv', format: 'csv' },
+                { label: 'Export as PDF', icon: 'fas fa-file-pdf', format: 'pdf' }
+            ];
+            
+            options.forEach(option => {
+                const item = document.createElement('div');
+                item.style.padding = '8px 15px';
+                item.style.cursor = 'pointer';
+                item.style.whiteSpace = 'nowrap';
+                item.innerHTML = `<i class="${option.icon} me-2"></i> ${option.label}`;
+                
+                item.addEventListener('mouseover', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                });
+                
+                item.addEventListener('mouseout', function() {
+                    this.style.backgroundColor = 'transparent';
+                });
+                
+                item.addEventListener('click', function() {
+                    // Handle export action
+                    alert(`Exporting as ${option.format}... This feature will be implemented soon.`);
+                    dropdown.remove();
+                });
+                
+                dropdown.appendChild(item);
+            });
+            
+            document.body.appendChild(dropdown);
+            
+            // Close dropdown when clicking elsewhere
+            document.addEventListener('click', function closeDropdown(e) {
+                if (e.target !== btn && !dropdown.contains(e.target)) {
+                    dropdown.remove();
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

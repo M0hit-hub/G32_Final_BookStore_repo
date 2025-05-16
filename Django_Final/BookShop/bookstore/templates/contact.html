@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="py-5" style="background: #f7ede2;">
+  <div class="container">
+    <h1 class="mb-4" style="font-weight: bold; color: #5E3A1A;">Contact Us</h1>
+    <div class="row mb-5">
+      <div class="col-md-6 mb-4 mb-md-0">
+        <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=800&q=80" alt="Contact Us" class="img-fluid rounded shadow">
+      </div>
+      <div class="col-md-6">
+        <h3 class="mb-3" style="color: #D4A56A;">We'd Love to Hear From You!</h3>
+        <p>Have questions, feedback, or just want to say hello? Our team is here to help you with anything you need.</p>
+        <ul class="list-unstyled mb-4">
+          <li class="mb-2"><i class="fas fa-envelope me-2" style="color: #5E3A1A;"></i> <strong>Email:</strong> hello@bytesandbrew.com</li>
+          <li class="mb-2"><i class="fas fa-phone me-2" style="color: #D4A56A;"></i> <strong>Phone:</strong> +1 (123) 456-7890</li>
+          <li class="mb-2"><i class="fas fa-map-marker-alt me-2" style="color: #5E3A1A;"></i> <strong>Address:</strong> 123 Book Lane, Coffee City, USA</li>
+        </ul>
+        <h5 class="mb-3">Business Hours</h5>
+        <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8 mx-auto">
+        <h3 class="mb-3" style="color: #D4A56A;">Send Us a Message</h3>
+        {% if messages %}
+        <div id="notification" class="notification">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <form method="POST" id="contactForm">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="name" class="form-label">Your Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Your Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+          </div>
+          <div class="mb-3">
+            <label for="message" class="form-label">Message</label>
+            <textarea class="form-control" id="message" name="message" rows="4" placeholder="Type your message here..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-warning px-4">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalLabel">Thank You!</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Your message has been sent successfully. We'll get back to you soon!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    min-width: 300px;
+}
+
+.alert {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 4px;
+    animation: slideIn 0.5s ease-out;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-header {
+    background-color: #D4A56A;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.modal-body {
+    padding: 2rem;
+    text-align: center;
+}
+
+.modal-footer .btn-primary {
+    background-color: #5E3A1A;
+    border-color: #5E3A1A;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: #D4A56A;
+    border-color: #D4A56A;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('contactForm');
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                successModal.show();
+                form.reset();
+            } else {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.innerHTML = `
+                    <div class="alert alert-error alert-dismissible fade show" role="alert">
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+                document.body.appendChild(notification);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,423 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Rubik+Wet+Paint&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Fjalla One", sans-serif;
+}
+
+body{
+    background-color: #cdd1de;
+}
+
+.authors-section {
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    font-family: "Libre Baskerville", serif; 
+    font-size: 60px;
+    font-weight: 700; 
+    background: linear-gradient(90deg, #413620, #9f7833); 
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    text-align: center; 
+    text-transform: uppercase; 
+    letter-spacing: 3px; 
+    position: relative; 
+    margin-bottom: 40px;
+}
+
+h1::after {
+    content: "";
+    position: absolute;
+    bottom: -10px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 4px;
+    background: linear-gradient(to right,#9f7833,#ffd791); 
+    transition: width 0.4s ease; 
+}
+
+h1:hover::after {
+    width: 100%; 
+}
+
+    
+
+
+/* Author Card */
+.author-card {
+    position: relative;
+    display: flex;
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.author-card img {
+    width: 180px;
+    height: 180px;
+    border-radius: 5%;
+    object-fit: cover;
+    margin-right: 20px;
+    transition: transform 0.3s ease;
+}
+
+.author-info {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+}
+
+.author-info h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+}
+
+.author-info p {
+    font-size: 16px;
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.author-info .btn {
+    display: inline-block;
+    padding: 10px 25px;
+    background-color: #9f7833;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+.author-info .btn:hover {
+    background-color: #413620;
+}
+
+.author-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.author-card:hover img {
+    transform: scale(1.1);
+}
+
+.author-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, #9f7833, #ffd791);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.author-card:hover::before {
+    opacity: 1;
+}
+
+.author-card:hover h2 {
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .author-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .author-card img {
+        margin-bottom: 20px;
+    }
+
+    .author-info {
+        padding: 15px;
+    }
+}
+
+
+
+
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    width: auto;
+    height: auto;
+    background: #000000;
+}
+
+.navbar img {
+    height: 130px;
+    padding: 20px;
+    margin-left: 10px;
+    margin-bottom: 20px;
+}
+
+.navmenu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+}
+
+.navmenu li {
+    display: inline-block;
+    margin-right: 30px;
+}
+
+.navmenu li a {
+    color: #ffffff;
+    margin-right: 20px;
+    padding: 0px 10px;
+    font-size: 18px;
+    font-family: "Montserrat", sans-serif;
+    ;
+}
+
+.navmenu li select {
+    color: #000000;
+    font-size: 18px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.navmenu li select option {
+    color: #000000;
+    font-family: "Montserrat", sans-serif;
+}
+
+.navmenu .cart i {
+    color: #ffffff;
+    position: relative;
+    right: 30px;
+    background-image: linear-gradient(violet, blue);
+    padding: 10px;
+    border-radius: 50px;
+}
+
+.books-slide {
+    margin-top: 8px;
+}
+
+
+
+.footer {
+    background: linear-gradient(135deg, #ffd791,#9c6615);
+    color: white;
+    padding: 60px 20px;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0 20px;
+}
+
+.footer-section {
+    width: 22%;
+    margin-bottom: 30px;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.footer-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+}
+
+.footer-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 15px;
+}
+
+.footer-section ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    position: relative;
+    transition: color 0.3s ease, padding-left 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #000;
+    padding-left: 10px;
+}
+
+/* Slide-in Animation for Links */
+.slide-in-links li {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideIn 0.6s forwards;
+}
+
+.slide-in-links li:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.slide-in-links li:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.slide-in-links li:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.slide-in-links li:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.slide-in-links li:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.slide-in-links li:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+/* Social Media Icons */
+.social-icons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    opacity: 0;
+    animation: slideUp 1s forwards;
+}
+
+.social-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-icon img {
+    width: 25px;
+    height: 25px;
+    transition: transform 0.3s ease;
+}
+
+.social-icon:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.social-icon:hover img {
+    transform: rotate(20deg);
+}
+
+/* Newsletter Section */
+.newsletter-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+}
+
+.newsletter-input {
+    padding: 15px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #333;
+    transition: border 0.3s ease;
+}
+
+.newsletter-input:focus {
+    border: 2px solid #f1c40f;
+    outline: none;
+}
+
+.subscribe-btn {
+    background-color: #f1c40f;
+    color: white;
+    border: none;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.subscribe-btn:hover {
+    background-color: #e67e22;
+    transform: scale(1.05);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9rem;
+    color: #ccc;
+    opacity: 0;
+    animation: fadeIn 1.5s ease-in-out forwards;
+}
+
+.footer-bottom p {
+    margin: 0;
+}
+
+/* Keyframe Animations */
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}

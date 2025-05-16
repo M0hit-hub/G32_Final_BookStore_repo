@@ -1,0 +1,546 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block title %}Customer Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-stat {
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .dashboard-stat .icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+    
+    .dashboard-stat .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .dashboard-stat .stat-label {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6c757d;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 350px;
+        margin-bottom: 30px;
+    }
+    
+    .metric-card {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .metric-card .metric-title {
+        font-size: 1rem;
+        color: #6c757d;
+        margin-bottom: 10px;
+    }
+    
+    .metric-card .metric-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    .metric-trend {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+    
+    .metric-trend.positive {
+        color: #28a745;
+    }
+    
+    .metric-trend.negative {
+        color: #dc3545;
+    }
+    
+    .customer-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #f1f1f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #495057;
+    }
+    
+    .filter-bar {
+        margin-bottom: 20px;
+    }
+    
+    .filter-buttons a.btn {
+        margin-right: 8px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 8px 22px;
+        letter-spacing: 0.5px;
+    }
+    .filter-buttons a.btn-primary {
+        background: linear-gradient(90deg, #6a4f2b 0%, #a67c52 100%);
+        color: #fff;
+        border: none;
+    }
+    .filter-buttons a.btn-outline-primary {
+        border: 2px solid #a67c52;
+        color: #a67c52;
+        background: #fff;
+    }
+    .filter-buttons a.btn:hover, .filter-buttons a.btn:focus {
+        box-shadow: 0 4px 16px rgba(166,124,82,0.15);
+        opacity: 0.92;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>{{ title }}</h2>
+        <div class="filter-buttons">
+            <a href="{% url 'admin_dashboard:customer_analytics' %}?period=7" class="btn {% if period == 7 %}btn-primary{% else %}btn-outline-primary{% endif %}">Last 7 Days</a>
+            <a href="{% url 'admin_dashboard:customer_analytics' %}?period=30" class="btn {% if period == 30 %}btn-primary{% else %}btn-outline-primary{% endif %}">Last 30 Days</a>
+            <a href="{% url 'admin_dashboard:customer_analytics' %}?period=90" class="btn {% if period == 90 %}btn-primary{% else %}btn-outline-primary{% endif %}">Last 90 Days</a>
+            <a href="{% url 'admin_dashboard:customer_analytics' %}?period=365" class="btn {% if period == 365 %}btn-primary{% else %}btn-outline-primary{% endif %}">Last Year</a>
+        </div>
+    </div>
+</div>
+
+<!-- Overview Stats -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="dashboard-stat">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-value">{{ total_customers }}</div>
+                    <div class="stat-label">Total Customers</div>
+                </div>
+                <div class="icon text-primary">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="dashboard-stat">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-value">{{ new_customers }}</div>
+                    <div class="stat-label">New Customers</div>
+                </div>
+                <div class="icon text-success">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+            </div>
+            <div class="metric-trend {% if new_customer_growth >= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas {% if new_customer_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                {% if new_customer_growth < 0 %}{{ new_customer_growth|floatformat:"2"|slice:"1:" }}{% else %}{{ new_customer_growth|floatformat:"2" }}{% endif %}% from previous period
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="dashboard-stat">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-value">₹{{ average_order_value|floatformat:2 }}</div>
+                    <div class="stat-label">Avg. Order Value</div>
+                </div>
+                <div class="icon text-info">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+            </div>
+            <div class="metric-trend {% if aov_growth >= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas {% if aov_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                {% if aov_growth < 0 %}{{ aov_growth|floatformat:"2"|slice:"1:" }}{% else %}{{ aov_growth|floatformat:"2" }}{% endif %}% from previous period
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="dashboard-stat">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-value">{{ customer_retention_rate }}%</div>
+                    <div class="stat-label">Retention Rate</div>
+                </div>
+                <div class="icon text-warning">
+                    <i class="fas fa-redo"></i>
+                </div>
+            </div>
+            <div class="metric-trend {% if retention_growth >= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas {% if retention_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                {% if retention_growth < 0 %}{{ retention_growth|floatformat:"2"|slice:"1:" }}{% else %}{{ retention_growth|floatformat:"2" }}{% endif %}% from previous period
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Metrics -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="metric-card">
+            <div class="metric-title">Customer Lifetime Value</div>
+            <div class="metric-value">₹{{ customer_lifetime_value|floatformat:2 }}</div>
+            <div class="metric-trend {% if clv_growth >= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas {% if clv_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                {% if clv_growth < 0 %}{{ clv_growth|floatformat:"2"|slice:"1:" }}{% else %}{{ clv_growth|floatformat:"2" }}{% endif %}% from previous period
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="metric-card">
+            <div class="metric-title">Customer Acquisition Cost</div>
+            <div class="metric-value">₹{{ customer_acquisition_cost|floatformat:2 }}</div>
+            <div class="metric-trend {% if cac_growth <= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas {% if cac_growth <= 0 %}fa-arrow-down{% else %}fa-arrow-up{% endif %} mr-1"></i>
+                {% if cac_growth < 0 %}{{ cac_growth|floatformat:"2"|slice:"1:" }}{% else %}{{ cac_growth|floatformat:"2" }}{% endif %}% from previous period
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="metric-card">
+            <div class="metric-title">Average Purchase Frequency</div>
+            <div class="metric-value">{{ purchase_frequency|floatformat:1 }} orders/year</div>
+            <div class="metric-trend {% if frequency_growth >= 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas {% if frequency_growth >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                {% if frequency_growth < 0 %}{{ frequency_growth|floatformat:"2"|slice:"1:" }}{% else %}{{ frequency_growth|floatformat:"2" }}{% endif %}% from previous period
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Customer Growth</h3>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="customerGrowthChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Customer Segmentation</h3>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="customerSegmentationChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Order Frequency Distribution</h3>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="orderFrequencyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Customer Geographic Distribution</h3>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="geoDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top Customers -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h3>Top Customers by Revenue</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Orders</th>
+                        <th>Total Spent</th>
+                        <th>Avg. Order Value</th>
+                        <th>Last Purchase</th>
+                        <th>Customer Since</th>
+                        <th>Loyalty Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in top_customers %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="customer-avatar mr-2">
+                                    {{ customer.initials }}
+                                </div>
+                                <div>
+                                    <div>{{ customer.full_name }}</div>
+                                    <div class="text-muted small">{{ customer.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ customer.orders_count }}</td>
+                        <td>₹{{ customer.total_spent|floatformat:2 }}</td>
+                        <td>₹{{ customer.avg_order|floatformat:2 }}</td>
+                        <td>{{ customer.last_purchase|date:"M d, Y" }}</td>
+                        <td>{{ customer.join_date|date:"M d, Y" }}</td>
+                        <td>
+                            <span class="badge bg-{{ customer.loyalty_color }}">{{ customer.loyalty_level }}</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No customer data available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Cohort Analysis -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h3>Customer Cohort Analysis</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered cohort-table">
+                <thead>
+                    <tr>
+                        <th>Cohort</th>
+                        <th>Size</th>
+                        <th>Month 1</th>
+                        <th>Month 2</th>
+                        <th>Month 3</th>
+                        <th>Month 4</th>
+                        <th>Month 5</th>
+                        <th>Month 6</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cohort in cohort_data %}
+                    <tr>
+                        <td>{{ cohort.month }}</td>
+                        <td>{{ cohort.size }}</td>
+                        {% for retention in cohort.retention %}
+                        <td {% if retention > 50 %}class="bg-success text-white"{% elif retention > 25 %}class="bg-info text-white"{% elif retention > 10 %}class="bg-warning"{% else %}class="bg-danger text-white"{% endif %}>
+                            {{ retention }}%
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No cohort data available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="time-labels" type="application/json">{{ time_labels|safe }}</script>
+<script id="new-customers-data" type="application/json">{{ new_customers_data|safe }}</script>
+<script id="total-customers-data" type="application/json">{{ total_customers_data|safe }}</script>
+<script id="segment-labels" type="application/json">{{ segment_labels|safe }}</script>
+<script id="segment-data" type="application/json">{{ segment_data|safe }}</script>
+<script id="frequency-labels" type="application/json">{{ frequency_labels|safe }}</script>
+<script id="frequency-data" type="application/json">{{ frequency_data|safe }}</script>
+<script id="geo-labels" type="application/json">{{ geo_labels|safe }}</script>
+<script id="geo-data" type="application/json">{{ geo_data|safe }}</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Customer Growth Chart
+        const growthCtx = document.getElementById('customerGrowthChart').getContext('2d');
+        const timeLabels = JSON.parse(document.getElementById('time-labels').textContent);
+        const newCustomersData = JSON.parse(document.getElementById('new-customers-data').textContent);
+        const totalCustomersData = JSON.parse(document.getElementById('total-customers-data').textContent);
+        const customerGrowthChart = new Chart(growthCtx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: 'New Customers',
+                    data: newCustomersData,
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                }, {
+                    label: 'Total Customers',
+                    data: totalCustomersData,
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Customer Segmentation Chart
+        const segmentCtx = document.getElementById('customerSegmentationChart').getContext('2d');
+        const segmentLabels = JSON.parse(document.getElementById('segment-labels').textContent);
+        const segmentData = JSON.parse(document.getElementById('segment-data').textContent);
+        const customerSegmentationChart = new Chart(segmentCtx, {
+            type: 'pie',
+            data: {
+                labels: segmentLabels,
+                datasets: [{
+                    data: segmentData,
+                    backgroundColor: [
+                        'rgba(220, 53, 69, 0.7)',  // New
+                        'rgba(255, 193, 7, 0.7)',  // Occasional
+                        'rgba(23, 162, 184, 0.7)', // Regular
+                        'rgba(40, 167, 69, 0.7)'   // Loyal
+                    ],
+                    borderColor: [
+                        'rgba(220, 53, 69, 1)',
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(23, 162, 184, 1)',
+                        'rgba(40, 167, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${context.label}: ${value} customers (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Order Frequency Chart
+        const frequencyCtx = document.getElementById('orderFrequencyChart').getContext('2d');
+        const frequencyLabels = JSON.parse(document.getElementById('frequency-labels').textContent);
+        const frequencyData = JSON.parse(document.getElementById('frequency-data').textContent);
+        const orderFrequencyChart = new Chart(frequencyCtx, {
+            type: 'bar',
+            data: {
+                labels: frequencyLabels,
+                datasets: [{
+                    label: 'Number of Customers',
+                    data: frequencyData,
+                    backgroundColor: 'rgba(94, 58, 26, 0.7)',
+                    borderColor: 'rgba(94, 58, 26, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Geographic Distribution Chart
+        const geoCtx = document.getElementById('geoDistributionChart').getContext('2d');
+        const geoLabels = JSON.parse(document.getElementById('geo-labels').textContent);
+        const geoData = JSON.parse(document.getElementById('geo-data').textContent);
+        const geoDistributionChart = new Chart(geoCtx, {
+            type: 'bar',
+            data: {
+                labels: geoLabels,
+                datasets: [{
+                    label: 'Customers',
+                    data: geoData,
+                    backgroundColor: 'rgba(0, 123, 255, 0.7)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %} 

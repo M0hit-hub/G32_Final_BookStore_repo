@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="shortcut icon" href="/static/images/bookstorelogo.png" type="image/x-icon">
+    <title>The Book Nook Store</title>
+    <style>
+        /* Book details modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            margin: 10vh auto;
+            padding: 0;
+            width: 80%;
+            max-width: 900px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .close-modal:hover {
+            color: #e74c3c;
+        }
+
+        .modal-body {
+            display: flex;
+            padding: 20px;
+        }
+
+        .modal-left {
+            flex: 0 0 300px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-left img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-right {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .modal-right h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .modal-right p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .modal-right .price {
+            color: #e74c3c;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .book-description {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .book-description h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .book-description p {
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .modal-buy-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            transition: background-color 0.3s;
+        }
+
+        .modal-buy-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Cart notification styles */
+        .cart-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ffffff;
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+
+        .cart-notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-content i {
+            color: #4CAF50;
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        .notification-content span {
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .modal-body {
+                flex-direction: column;
+            }
+
+            .modal-left {
+                flex: 0 0 auto;
+                margin-bottom: 20px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 5vh auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'header.html' %}
+    <div class="container">
+        <header class="search-header">
+            <input type="text" placeholder="Search by Book" class="search-input">
+            <select class="category-dropdown">
+                <option value="">By Category</option>
+                <option value="Astrology">Astrology</option>
+                <option value="Business Ebook">Business Ebook</option>
+                <option value="Health/Wellness">Health/Wellness</option>
+                <option value="History/Politics">History/Politics</option>
+                <option value="Monograph">Monograph</option>
+                <option value="Motivational">Motivational</option>
+                <option value="Mythology">Mythology</option>
+                <option value="Non-fiction">Non-fiction</option>
+                <option value="Biographies">Biographies</option>
+                <option value="Children's Books">Children's Books</option>
+                <option value="Social Science">Social Science</option>
+                <option value="Theatre & Cinema">Theatre & Cinema</option>
+                <option value="Spirituality">Spirituality</option>
+            </select>
+            <select class="author-dropdown">
+                <option value="">By Author</option>
+                <option value="Abdul Kader Mukadam">Abdul Kader Mukadam</option>
+                <option value="Ajay Kalra">Ajay Kalra</option>
+                <option value="Amit Joshi">Amit Joshi</option>
+                <!-- More authors -->
+            </select>
+            <button class="find-book-btn">Find Book</button>
+        </header>
+    </div>
+    <main>
+        <h2 class="new-releases">New Releases</h2>
+
+        <div class="book-list">
+            <!-- Original 6 Books -->
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/Prayers to ganesha.jpg" alt="Prayers to Ganesha">
+                <h3>Prayers to GANESHA</h3>
+                <p><b>By Sonavi Desai</b></p>
+                <p class="price">₹ 499.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/immortal love.jpg" alt="Immortal Love">
+                <h3>IMMORTAL LOVE</h3>
+                <p><b>By Sulini V. Nair</b></p>
+                <p class="price">₹ 299.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/bombay book.jpg" alt="By-Ways of Bombay">
+                <h3>BY-WAYS OF BOMBAY</h3>
+                <p><b>By S.M. Edwardes</b></p>
+                <p class="price">₹ 499.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/Pasaydan.jpg" alt="Pasayadan">
+                <h3>Pasayadan</h3>
+                <p><b>By Subhash Maharaj Gethe & S.N. Sudharsan</b></p>
+                <p class="price">₹ 200.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/mystery of the hill.jpg" alt="Mystery in the Hills">
+                <h3>Mystery in the Hills</h3>
+                <p><b>By Aryan Joshi</b></p>
+                <p class="price">₹ 450.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/tales of wit and wisdom.jpg" alt="Tales of Wisdom">
+                <h3>Tales of Wisdom</h3>
+                <p><b>By Meera Patel</b></p>
+                <p class="price">₹ 299.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/the legend of forest flowers.jpg" alt="Legends of the Forests">
+                <h3>Legends of the Forests</h3>
+                <p><b>By Rohan Singh</b></p>
+                <p class="price">₹ 399.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/whispers in the wind.jpg" alt="Whispers of the Wind">
+                <h3>Whispers of the Wind</h3>
+                <p><b>By Neha Verma</b></p>
+                <p class="price">₹ 350.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/journey to the stars.jpg" alt="Journey to the Stars">
+                <h3>Journey to the Stars</h3>
+                <p><b>By Vikram Rao</b></p>
+                <p class="price">₹ 550.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/the dance of minds.jpg" alt="Dance of the Mind">
+                <h3>Dance of the Mind</h3>
+                <p><b>By Kavita Sharma</b></p>
+                <p class="price">₹ 299.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item">
+                <img src="/static/images/echoes in the past.jpg" alt="Echoes from the Past">
+                <h3>Echoes from the Past</h3>
+                <p><b>By Anjali Roy</b></p>
+                <p class="price">₹ 400.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+
+            <div class="book-item" data-category="History/Politics">
+                <img src="/static/images/tales of unknown.jpg" alt="Tales of the Unknown">
+                <h3>Tales of the Unknown</h3>
+                <p><b>By Arjun Kumar</b></p>
+                <p class="price">₹ 275.00</p>
+                <button class="detail-btn">DETAIL</button>
+                <button class="buy-btn">BUY</button>
+            </div>
+        </div>
+
+        </div>
+        <div class="popular-books">
+            <h2 class="popular-section">Popular Books</h2>
+
+            <div class="book-list">
+                <div class="book-item" data-category="History/Politics">
+                    <img src="/static/images/the alchemist.jpg" alt="The Alchemist">
+                    <h3>The Alchemist</h3>
+                    <p><b>By Paulo Coelho</b></p>
+                    <p class="price">₹ 350.00</p>
+                    <button class="detail-btn">DETAIL</button>
+                    <button class="buy-btn">BUY</button>
+                </div>
+
+                <div class="book-item" data-category="History/Politics">
+                    <img src="/static/images/to kill a mocking bird.jpg" alt="To Kill a Mockingbird">
+                    <h3>To Kill a Mockingbird</h3>
+                    <p><b>By Harper Lee</b></p>
+                    <p class="price">₹ 499.00</p>
+                    <button class="detail-btn">DETAIL</button>
+                    <button class="buy-btn">BUY</button>
+                </div>
+
+                <div class="book-item" data-category="History/Politics">
+                    <img src="/static/images/george 1984.jpg" alt="1984">
+                    <h3>1984</h3>
+                    <p><b>By George Orwell</b></p>
+                    <p class="price">₹ 399.00</p>
+                    <button class="detail-btn">DETAIL</button>
+                    <button class="buy-btn">BUY</button>
+                </div>
+
+                <div class="book-item">
+                    <img src="/static/images/ghastby.jpg" alt="The Great Gatsby">
+                    <h3>The Great Gatsby</h3>
+                    <p><b>By F. Scott Fitzgerald</b></p>
+                    <p class="price">₹ 450.00</p>
+                    <button class="detail-btn">DETAIL</button>
+                    <button class="buy-btn">BUY</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Footer Sections -->
+            <div class="footer-section">
+                <h3 class="footer-title">Explore Our Store</h3>
+                <ul class="slide-in-links">
+                    <ul>
+                        <li><a href="{{ url_for('category', category_name='BusinessEbook') }}">Business</a></li>
+                        <li><a href="{{ url_for('category', category_name='health,wellness') }}">Health & Wellness</a>
+                        </li>
+                        <li><a href="{{ url_for('category', category_name='history,politics') }}">History & Politics</a>
+                        </li>
+                        <li><a href="{{ url_for('category', category_name='Spirituality') }}">Spirituality</a></li>
+                        <li><a href="{{ url_for('category', category_name='Languages') }}">Languages</a></li>
+                        <li><a href="{{ url_for('category', category_name='Mythology') }}">Mythology</a></li>
+                    </ul>
+
+                </ul>
+            </div>
+
+            
+
+            <div class="footer-section">
+                <h3 class="footer-title">Connect with Us</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" class="social-icon">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHHQ1tYDFw8In3ArE11fy-HfaGgjkh5fxd_w&s"
+                            alt="Facebook">
+                    </a>
+                    <a href="https://www.twitter.com" target="_blank" class="social-icon">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnVBm5LAuRicWnxNWosMv8DCOExNtHf532hA&s"
+                            alt="Twitter">
+                    </a>
+                    <a href="https://www.instagram.com" target="_blank" class="social-icon">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/2048px-Instagram_logo_2022.svg.png"
+                            alt="Instagram">
+                    </a>
+                    <a href="https://www.linkedin.com" target="_blank" class="social-icon">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/768px-LinkedIn_logo_initials.png"
+                            alt="LinkedIn">
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Stay Informed</h3>
+                <p>Sign up for our newsletter to get exclusive updates, offers, and recommendations.</p>
+                <form action="/subscribe" method="post" class="newsletter-form">
+                    <input type="email" placeholder="Enter your email" required class="newsletter-input">
+                    <button type="submit" class="subscribe-btn">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <!-- Book Details Modal -->
+        <div id="bookDetailsModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="modal-body">
+                    <div class="modal-left">
+                        <img id="modalBookImage" src="" alt="Book cover">
+                    </div>
+                    <div class="modal-right">
+                        <h2 id="modalBookTitle"></h2>
+                        <p id="modalBookAuthor"></p>
+                        <p id="modalBookPrice" class="price"></p>
+                        <div class="book-description">
+                            <h3>Book Description</h3>
+                            <p id="modalBookDescription">This is a placeholder for the book description. When the
+                                details button is clicked, this text will be populated with the actual description of
+                                the selected book.</p>
+                        </div>
+                        <button id="modalBuyButton" class="buy-btn modal-buy-btn">ADD TO CART</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <p>&copy; 2024 The BookNook. All Rights Reserved. | Designed with ❤ by Your Company</p>
+        </div>
+    </footer>
+
+
+
+
+    <script src="/static/js/script.js"></script>
+    <script>// Add this script to the end of your index.html before </body>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Update cart display on page load
+            updateCartDisplay();
+
+            // Add event listeners to all buy buttons
+            const buyButtons = document.querySelectorAll('.buy-btn');
+            buyButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    const bookItem = this.closest('.book-item');
+                    const bookData = {
+                        id: Date.now(), // Use timestamp as a unique ID
+                        image: bookItem.querySelector('img').src,
+                        title: bookItem.querySelector('h3').textContent,
+                        author: bookItem.querySelector('p b').textContent.replace('By ', ''),
+                        price: bookItem.querySelector('.price').textContent,
+                        quantity: 1
+                    };
+
+                    // Send the data to server
+                    fetch('/add-to-cart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(bookData),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Show notification
+                                showNotification(bookData.title);
+
+                                // Update cart count and total in navbar
+                                updateCartDisplay(data.cart_count, data.cart_total);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error adding to cart:', error);
+                        });
+                });
+            });
+
+
+            document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector(".newsletter-form").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const formData = new FormData(this); // Get form data
+
+            fetch("/subscribe", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Show success or error message in a pop-up
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    });
+
+
+            // Function to show notification
+            function showNotification(bookTitle) {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.classList.add('cart-notification');
+                notification.innerHTML = `
+                    <div class="notification-content">
+                        <i class="fas fa-check-circle"></i>
+                        <span>${bookTitle} added to cart!</span>
+                    </div>
+                `;
+
+                // Add notification to body
+                document.body.appendChild(notification);
+
+                // Show notification with animation
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+
+                // Remove notification after 3 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+
+            // Function to update cart display
+            function updateCartDisplay(count = null, total = null) {
+                if (count === null || total === null) {
+                    // Fetch cart data if not provided
+                    fetch('/get-cart-data')
+                        .then(response => response.json())
+                        .then(data => {
+                            document.querySelector('.cart-count').textContent = data.cart_count;
+                            document.querySelector('.cart-total').textContent = data.cart_total;
+                        })
+                        .catch(error => {
+                            console.error('Error fetching cart data:', error);
+                        });
+                } else {
+                    // Update with provided data
+                    document.querySelector('.cart-count').textContent = count;
+                    document.querySelector('.cart-total').textContent = total;
+                }
+            }
+            // Book details modal functionality
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get modal elements
+                const modal = document.getElementById('bookDetailsModal');
+                const closeButton = document.querySelector('.close-modal');
+                const detailButtons = document.querySelectorAll('.detail-btn');
+
+                // Handle detail button clicks
+                detailButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const bookItem = this.closest('.book-item');
+
+                        // Get book information
+                        const bookImage = bookItem.querySelector('img').src;
+                        const bookTitle = bookItem.querySelector('h3').textContent;
+                        const bookAuthor = bookItem.querySelector('p b').textContent;
+                        const bookPrice = bookItem.querySelector('.price').textContent;
+
+                        // Populate modal
+                        document.getElementById('modalBookImage').src = bookImage;
+                        document.getElementById('modalBookTitle').textContent = bookTitle;
+                        document.getElementById('modalBookAuthor').textContent = bookAuthor;
+                        document.getElementById('modalBookPrice').textContent = bookPrice;
+
+                        // Create a "buy" function for the modal button
+                        document.getElementById('modalBuyButton').onclick = function () {
+                            // Simulate clicking the buy button on the original book item
+                            bookItem.querySelector('.buy-btn').click();
+
+                            // Add a confirmation message inside the modal
+                            const confirmation = document.createElement('p');
+                            confirmation.textContent = 'Added to cart!';
+                            confirmation.classList.add('added-confirmation');
+                            confirmation.style.color = '#4caf50';
+                            confirmation.style.fontWeight = 'bold';
+                            confirmation.style.marginTop = '10px';
+
+                            const modalBuyButton = document.getElementById('modalBuyButton');
+                            modalBuyButton.insertAdjacentElement('afterend', confirmation);
+
+                            // Remove confirmation after 2 seconds
+                            setTimeout(() => {
+                                confirmation.remove();
+                            }, 2000);
+                        };
+
+                        // Show modal with animation
+                        modal.style.display = 'block';
+                        setTimeout(() => {
+                            modal.classList.add('show');
+                        }, 10);
+                    });
+                });
+
+                // Close modal when X button is clicked
+                closeButton.addEventListener('click', closeModal);
+
+                // Close modal when clicking outside modal content
+                window.addEventListener('click', function (event) {
+                    if (event.target === modal) {
+                        closeModal();
+                    }
+                });
+
+                // Close modal function
+                function closeModal() {
+                    modal.classList.remove('show');
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                    }, 300);
+                }
+            });
+        });</script>
+</body>
+
+</html>

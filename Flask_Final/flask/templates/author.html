@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authors</title>
+    <link rel="stylesheet" href="/static/css/author.css">
+    <link rel="shortcut icon" href="/static/images/bookstorelogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/static/images/bookstorelogo.png" alt="logo">
+        </div>
+        <div class="navmenu">
+            <ul>
+                <li><a href="{{ url_for('home') }}">HOME</a></li>
+                <li>
+                    <select id="categoryDropdown" onchange="redirectToCategory()">
+                        <option value="#">CATEGORIES</option>
+                        <option value="{{ url_for('category', category_name='BusinessEbook') }}">BUSINESS EBOOK</option>
+                        <option value="{{ url_for('category', category_name='health,wellness') }}">HEALTH/WELLNESS</option>
+                        <option value="{{ url_for('category', category_name='history,politics') }}">HISTORY & POLITICS</option>
+                        <option value="{{ url_for('category', category_name='Non-fiction') }}">NON-FICTION</option>
+                        <option value="{{ url_for('category', category_name='Spirituality') }}">SPIRITUALITY</option>
+                        <option value="{{ url_for('category', category_name='Mythology') }}">MYTHOLOGY</option>
+                        <option value="{{ url_for('category', category_name='Languages') }}">LANGUAGES</option>
+                    </select>
+                </li>
+                
+                <script>
+                    function redirectToCategory() {
+                        var dropdown = document.getElementById("categoryDropdown");
+                        var selectedValue = dropdown.value.trim();  // Ensure no extra spaces
+                        if (selectedValue !== "#") {  
+                            window.location.href = selectedValue;  // Redirect to Flask route
+                        }
+                    }
+                </script>
+                
+                <li><a href="{{ url_for('authors') }}">AUTHORS</a></li>
+                <li><a href="{{ url_for('about') }}">ABOUT</a></li>
+                <li><a href="{{ url_for('blog') }}">BLOG</a></li>
+                <li><a href="{{ url_for('login') }}">LOGIN</a></li>
+            </ul>
+                
+
+            <div class="cart">
+                <a href="/templates/finalcart.html">
+                    <i class='bx bxs-cart-alt'></i>
+                    <span class="cart-count">0</span> Items | ₹<span class="cart-total">0</span>
+                </a>
+            </div>
+            
+            <!-- <div class="cart">
+                <a href="finalcart.html">
+                <i class='bx bxs-cart-alt'></i>
+            </div>     -->
+            <!-- <div class="cart">
+                <i class='bx bxs-cart-alt'></i>
+            </div> -->
+    </nav>
+
+    <div class="authors-section">
+        <h1>Authors</h1>
+
+        <div class="author-card">
+            <img src="/static/images/abdul-kader-mukadam.gif" alt="Abdul Kader Mukadam">
+            <div class="author-info">
+                <h2>Abdul Kader Mukadam</h2>
+                <p>Abdul Kader Muqadam is a scholar of political and social affairs and his special study is on the
+                    issue of Muslim society.</p>
+                    <a href="{{ url_for('allbooks') }}" class="btn">View All Books</a>
+
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/Ajay-Kalra-2-e1638268276205-1024x1024.jpg" alt="Ajay Kalra">
+            <div class="author-info">
+                <h2>Ajay Kalra</h2>
+                <p>Ajay Kalra is a personal growth writer, life coach, therapist, counsellor, Yoga teacher, and
+                    mindfulness practitioner...</p>
+                    <a href="{{ url_for('allbook2') }}" class="btn">View All Books</a>
+
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/Aamit_Joshi_Stifel_480-e1634237006573.jpg" alt="Amit Joshi">
+            <div class="author-info">
+                <h2>Amit Joshi</h2>
+                <p>Amit Joshi is a successful trainer with 13+ years of experience in Language and Soft Skills
+                    Training...</p>
+                    <a href="{{ url_for('allabout3') }}" class="btn">View All Books</a>
+
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/Annemarie-de-Vries-Postma.jpg" alt="Annemarie Postma">
+            <div class="author-info">
+                <h2>Annemarie Postma</h2>
+                <p>Annemarie Postma was the first professional model in Europe with a disability, appearing in Playboy
+                    in 1995...</p>
+                    <a href="{{ url_for('allabout4') }}" class="btn">View All Books</a>
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/ashita saxena.jpg" alt="ashita saxena">
+            <div class="author-info">
+                <h2>Ashita Saxena</h2>
+                <p>nterested in Natural Language Processing and Hallucination in generative tasks. Currently working
+                    under Prof.</p>
+                    <a href="{{ url_for('allabout5') }}" class="btn">View All Books</a>
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/john smith.jpg" alt="John Smith">
+            <div class="author-info">
+                <h2>John Smith</h2>
+                <p>John Smith is a bestselling author known for his work on modern psychology and mental wellness...</p>
+                <a href="#" class="btn">View All Books</a>
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/Helen-Fisher-by-Fabian-Jimenez.jpg" alt="Elena Fisher">
+            <div class="author-info">
+                <h2>Helen Fisher</h2>
+                <p>Helen Fisher is an award-winning journalist and travel writer who has explored over 50 countries...
+                </p>
+                <a href="#" class="btn">View All Books</a>
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/MV5BNzI0YTMzNjYtZmJjYS00NzZjLWJkYzYtM2FiYWE1ODI1NjQ2XkEyXkFqcGc@._V1_.jpg" alt="Michael Green">
+            <div class="author-info">
+                <h2>Michael Green</h2>
+                <p>Michael Green is an environmental scientist and author focused on sustainable development...</p>
+                <a href="#" class="btn">View All Books</a>
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/u2ntqpeln8a72jsvu9ubhvojqe._SY450_CR0,0,450,450_.jpg" alt="Sophia Lee">
+            <div class="author-info">
+                <h2>Sophia Lee</h2>
+                <p>Sophia Lee is a nutritionist and wellness expert who writes about holistic health approaches...</p>
+                <a href="#" class="btn">View All Books</a>
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/American_New_Orleans-based_author_David_W._Brown.png" alt="David Brown">
+            <div class="author-info">
+                <h2>David Brown</h2>
+                <p>David Brown is an economist and author specializing in global financial trends and markets...</p>
+                <a href="#" class="btn">View All Books</a>
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/ow.jpg" alt="Olivia White">
+            <div class="author-info">
+                <h2>Olivia White</h2>
+                <p>Olivia White is a children’s book author whose stories focus on empathy and kindness...</p>
+                <a href="#" class="btn">View All Books</a>
+            </div>
+        </div>
+
+        <div class="author-card">
+            <img src="/static/images/images.jpg" alt="Charles Bailey">
+            <div class="author-info">
+                <h2>Charles Bailey</h2>
+                <p>Charles Bailey is a historian and author known for his extensive research on medieval Europe...</p>
+                <a href="#" class="btn">View All Books</a>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+    </div>
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Footer Sections -->
+            <div class="footer-section">
+                <h3 class="footer-title">Explore Our Store</h3>
+                <ul>
+                    <li><a href="{{ url_for('category', category_name='BusinessEbook') }}">Business</a></li>
+                    <li><a href="{{ url_for('category', category_name='health,wellness') }}">Health & Wellness</a>
+                    </li>
+                    <li><a href="{{ url_for('category', category_name='history,politics') }}">History & Politics</a>
+                    </li>
+                    <li><a href="{{ url_for('category', category_name='Spirituality') }}">Spirituality</a></li>
+                    <li><a href="{{ url_for('category', category_name='Languages') }}">Languages</a></li>
+                    <li><a href="{{ url_for('category', category_name='Mythology') }}">Mythology</a></li>
+                </ul>
+
+            </div>
+
+            
+
+            <div class="footer-section">
+                <h3 class="footer-title">Connect with Us</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" class="social-icon">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHHQ1tYDFw8In3ArE11fy-HfaGgjkh5fxd_w&s"
+                            alt="Facebook">
+                    </a>
+                    <a href="https://www.twitter.com" target="_blank" class="social-icon">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnVBm5LAuRicWnxNWosMv8DCOExNtHf532hA&s"
+                            alt="Twitter">
+                    </a>
+                    <a href="https://www.instagram.com" target="_blank" class="social-icon">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/2048px-Instagram_logo_2022.svg.png"
+                            alt="Instagram">
+                    </a>
+                    <a href="https://www.linkedin.com" target="_blank" class="social-icon">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/768px-LinkedIn_logo_initials.png"
+                            alt="LinkedIn">
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">Stay Informed</h3>
+                <p>Sign up for our newsletter to get exclusive updates, offers, and recommendations.</p>
+                <form action="/subscribe" method="post" class="newsletter-form">
+                    <input type="email" placeholder="Enter your email" required class="newsletter-input">
+                    <button type="submit" class="subscribe-btn">Subscribe</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <p>&copy; 2024 The BookNook. All Rights Reserved. | Designed with ❤ by Your Company</p>
+        </div>
+    </footer>
+
+
+    
+    
+</body>
+
+</html>

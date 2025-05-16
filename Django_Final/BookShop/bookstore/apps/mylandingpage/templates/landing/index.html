@@ -1,0 +1,225 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+
+{% block title %}Welcome to Our Platform{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold mb-4">Transform Your Workflow with Our Django Platform</h1>
+                    <p class="lead mb-5">A powerful, intuitive solution designed to streamline your business processes and boost productivity.</p>
+                    <div class="hero-buttons">
+                        <a href="#features" class="btn btn-primary btn-lg me-3">Explore Features</a>
+                        <a href="#" class="btn btn-outline-dark btn-lg">Watch Demo</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <img src="{% static 'img/hero-image.png' %}" alt="Platform Preview" class="img-fluid hero-image">
+            </div>
+        </div>
+    </div>
+    <div class="hero-wave">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features py-5" id="features">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="display-5 fw-bold">Powerful Features</h2>
+            <p class="lead text-muted">Everything you need to succeed</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-tachometer-alt fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="h5 card-title">Intuitive Dashboard</h3>
+                        <p class="card-text">Access all your important data from one centralized, user-friendly interface.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="h5 card-title">Advanced Security</h3>
+                        <p class="card-text">Enterprise-grade security with Django's battle-tested authentication system.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-chart-line fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="h5 card-title">Data Analytics</h3>
+                        <p class="card-text">Powerful reporting tools and visualizations to help you make better decisions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-4">
+                            <i class="fas fa-cogs fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="h5 card-title">Automation</h3>
+                        <p class="card-text">Automate repetitive tasks and streamline your business processes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works py-5 bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="display-5 fw-bold">How It Works</h2>
+            <p class="lead text-muted">Simple and effective workflow</p>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-lg-5 mb-4 mb-lg-0">
+                <img src="{% static 'img/workflow.png' %}" alt="How It Works" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-lg-7">
+                <div class="steps">
+                    <div class="step d-flex mb-4">
+                        <div class="step-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">1</div>
+                        <div>
+                            <h3 class="h5">Create Your Account</h3>
+                            <p>Sign up in seconds and access your personalized dashboard.</p>
+                        </div>
+                    </div>
+                    <div class="step d-flex mb-4">
+                        <div class="step-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">2</div>
+                        <div>
+                            <h3 class="h5">Configure Your Workspace</h3>
+                            <p>Customize your settings and integrate with your favorite tools.</p>
+                        </div>
+                    </div>
+                    <div class="step d-flex mb-4">
+                        <div class="step-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">3</div>
+                        <div>
+                            <h3 class="h5">Invite Your Team</h3>
+                            <p>Collaborate with your team members and assign roles.</p>
+                        </div>
+                    </div>
+                    <div class="step d-flex">
+                        <div class="step-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">4</div>
+                        <div>
+                            <h3 class="h5">Start Working Smarter</h3>
+                            <p>Enjoy increased productivity and streamlined workflows.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="display-5 fw-bold">What Our Clients Say</h2>
+            <p class="lead text-muted">Don't just take our word for it</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="testimonial-card card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="testimonial-rating text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="card-text mb-4">"This Django platform has transformed how we manage our projects. The automation features alone have saved us countless hours."</p>
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'img/testimonial-1.jpg' %}" alt="Sarah Johnson" class="rounded-circle me-3" width="50">
+                            <div>
+                                <h5 class="mb-0">Sarah Johnson</h5>
+                                <small class="text-muted">Project Manager</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="testimonial-card card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="testimonial-rating text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="card-text mb-4">"The analytics and reporting tools have given us insights we never had before. Now we can make data-driven decisions with confidence."</p>
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'img/testimonial-2.jpg' %}" alt="Michael Chen" class="rounded-circle me-3" width="50">
+                            <div>
+                                <h5 class="mb-0">Michael Chen</h5>
+                                <small class="text-muted">Data Analyst</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="testimonial-card card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="testimonial-rating text-warning mb-3">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="card-text mb-4">"Setting up our team was incredibly easy. The user management system is intuitive and the security features give us peace of mind."</p>
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'img/testimonial-3.jpg' %}" alt="Jessica Patel" class="rounded-circle me-3" width="50">
+                            <div>
+                                <h5 class="mb-0">Jessica Patel</h5>
+                                <small class="text-muted">IT Director</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-9 mb-4 mb-lg-0">
+                <h2 class="display-5 fw-bold">Ready to Get Started?</h2>
+                <p class="lead mb-0">Join thousands of satisfied users and experience the power of our Django application.</p>
+            </div>
+            <div class="col-lg-3 text-lg-end">
+                <a href="#" class="btn btn-light btn-lg">Sign Up Now</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

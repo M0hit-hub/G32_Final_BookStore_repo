@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajay Kalra - Author Page</title>
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        /* Author Header Section */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .header img {
+            width: 200px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .header .description {
+            flex: 1;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            font-size: 1em;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* Book List Section */
+        .book-list {
+            display: flex;
+            justify-content: space-evenly; /* Even spacing between cards */
+            flex-wrap: nowrap; /* Prevent wrapping */
+            margin: 0 auto; /* Center the book list */
+            padding: 20px 0;
+        }
+
+        /* Individual Book Items */
+        .book-item {
+            background: linear-gradient(135deg, #fff0f5, #f0fff0);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0px 10px 30px rgba(151, 83, 23, 0.623);
+            width: 22%; /* Ensure all four cards fit in one line */
+            transition: box-shadow 0.4s ease, transform 0.3s ease;
+        }
+
+        .book-item:hover {
+            box-shadow: 0px 16px 40px rgba(255, 119, 0, 0.658);
+            transform: translateY(-7px);
+        }
+
+        /* Book Cover Image */
+        .book-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            box-shadow: 0px 4px 12px rgba(255, 160, 122, 0.2);
+        }
+
+        .book-item:hover img {
+            transform: scale(1.1);
+            box-shadow: 0px 8px 20px rgba(255, 160, 122, 0.3);
+        }
+
+        /* Book Title */
+        .book-item h3 {
+            font-size: 1.6em;
+            margin: 15px 0;
+            color: #ff6f61;
+            font-weight: bold;
+            background: linear-gradient(90deg, #9c6615, #9f7833);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Author Header -->
+        <div class="header">
+            <img src="https://ajayakalra.com/wp-content/uploads/2021/11/Ajay-Kalra-1.jpg" alt="Ajay Kalra Photo">
+            <div class="description">
+                <h1>Ajay Kalra</h1>
+                <p>Ajay Kalra is a prolific author and thought leader, renowned for his compelling insights into the realms of personal growth, mindfulness, and emotional intelligence. His works delve into practical approaches for achieving success while nurturing mental well-being. With a passion for empowering readers, Ajay has written several impactful books that continue to inspire and transform lives worldwide.</p>
+            </div>
+        </div>
+
+        <!-- Books Section -->
+        <div class="book-list">
+            <div class="book-item">
+                <img src="https://www.heathbooks.co.uk/wp-content/uploads/2023/03/9781915026132.jpg" alt="Book 1">
+                <h3>Mindful Living</h3>
+            </div>
+            <div class="book-item">
+                <img src="https://th.bing.com/th/id/OIP.h5FgPYR3snQuIEuQZYfoQQAAAA?w=260&h=394&rs=1&pid=ImgDetMain" alt="Book 2">
+                <h3>FAILURE IS A KNOCK</h3>
+            </div>
+       
+        </div>
+    </div>
+</body>
+</html>

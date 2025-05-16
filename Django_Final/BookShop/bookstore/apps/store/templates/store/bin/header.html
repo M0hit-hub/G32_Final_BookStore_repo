@@ -1,0 +1,117 @@
+{% load static %}
+<style>
+	.navbar {
+		padding: 1rem 2rem;
+	}
+	.navbar-nav > li {
+		margin-left: 1.2rem;
+		margin-right: 1.2rem;
+	}
+	.navbar .btn-warning {
+		margin-left: 1.2rem;
+		margin-right: 1.2rem;
+		padding: 0.6rem 1.4rem;
+	}
+	.navbar-brand {
+		margin-right: 2.5rem;
+	}
+	.search-form {
+		margin: 0 2.5rem;
+		min-width: 400px;
+	}
+	.nav-link {
+		padding: 0.6rem 1.2rem !important;
+		font-weight: 500;
+	}
+	.dropdown-menu {
+		background: #fff !important;
+		color: #232f3e !important;
+		border-radius: 8px;
+		min-width: 200px;
+		box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+		padding: 0.6rem;
+	}
+	.dropdown-menu .dropdown-item {
+		color: #232f3e !important;
+		font-weight: 500;
+		padding: 0.8rem 1.4rem;
+		border-radius: 6px;
+		transition: background 0.2s, color 0.2s;
+	}
+	.dropdown-menu .dropdown-item:hover, .dropdown-menu .dropdown-item:focus {
+		background: #ffc107 !important;
+		color: #232f3e !important;
+	}
+	.dropdown-divider {
+		border-top: 1px solid #eee;
+		margin: 0.6rem 0;
+	}
+	.navbar-toggler {
+		padding: 0.6rem;
+		margin-left: 1.2rem;
+	}
+	.badge {
+		font-size: 0.75rem;
+		padding: 0.25rem 0.5rem;
+	}
+</style>
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #232f3e; border-bottom: 2px solid #ffc107;">
+	<div class="container-fluid py-2">
+		<a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'store:index' %}" style="font-size: 1.6rem;">
+			<img src="{% static 'images/logo/logo.png' %}" alt="Online Bookshop" height="40" class="me-2"/>
+		</a>
+		<a href="{% url 'portal:home' %}" class="btn btn-warning fw-bold d-none d-lg-inline-block" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">Go to Bytes & Brew</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#bookstoreNavbar">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="bookstoreNavbar">
+			<form class="d-flex ms-auto me-3" action="{% url 'search:search' %}" method="GET" style="max-width:350px;">
+				<input class="form-control me-2" type="search" placeholder="Search Book" name="q" value="{{search}}" style="border-radius: 20px;">
+				<button class="btn btn-warning px-3" type="submit" style="border-radius: 20px;"><i class="fa fa-search"></i></button>
+			</form>
+			<ul class="navbar-nav mb-2 mb-lg-0 align-items-lg-center">
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'merchandise:merchandise_home' %}"><i class="fa fa-gift me-1"></i> Merchandise</a>
+				</li>
+				{% if request.user.is_authenticated and request.user.is_staff or request.user.is_authenticated and request.user.is_superuser %}
+				<li class="nav-item">
+					<a class="btn btn-outline-info fw-bold ms-2" href="/dashboard/analytics/sales/" style="border-radius: 20px;">Sale Analytics</a>
+				</li>
+				<li class="nav-item">
+					<a class="btn btn-outline-success fw-bold ms-2" href="/dashboard/analytics/customers/" style="border-radius: 20px;">Customer Analytics</a>
+				</li>
+				{% endif %}
+				{% if request.user.is_authenticated and not request.user.is_staff and not request.user.is_superuser %}
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'order:track_order_input' %}"><i class="fa fa-map-marker me-1"></i> Track Your Order</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link position-relative" href="{% url 'cart:cart_details' %}"><i class="fa fa-shopping-cart me-1"></i> Cart <span class="badge bg-warning text-dark position-absolute top-0 start-100 translate-middle" style="font-size:0.8rem;">{{ cart|length }}</span></a>
+				</li>
+				{% endif %}
+				{% if request.user.is_authenticated %}
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<i class="fa fa-user me-1"></i> <span>{{ request.user.username }}</span>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-end mt-2 shadow-sm" aria-labelledby="userDropdown">
+						{% if request.user.is_staff or request.user.is_superuser %}
+						<li><a class="dropdown-item" href="/dashboard/"><i class="fa fa-tachometer me-1"></i> Dashboard</a></li>
+						<li><a class="dropdown-item" href="/dashboard/products/"><i class="fa fa-box me-1"></i> Products</a></li>
+						<li><a class="dropdown-item" href="/dashboard/users/"><i class="fa fa-users me-1"></i> Users</a></li>
+						<li><hr class="dropdown-divider"></li>
+						{% endif %}
+						<li><a class="dropdown-item" href="{% url 'order:order_list' %}"><i class="fa fa-shopping-cart me-1"></i> My order</a></li>
+						<li><a class="dropdown-item" href="{% url 'store:signout' %}"><i class="fa fa-sign-out me-1"></i> Sign Out</a></li>
+					</ul>
+				</li>
+				{% else %}
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'store:signin' %}"><i class="fa fa-sign-in me-1"></i> Sign In</a>
+				</li>
+				{% endif %}
+			</ul>
+			<a href="{% url 'portal:home' %}" class="btn btn-warning fw-bold d-lg-none mt-2" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08);">Go to Bytes & Brew</a>
+		</div>
+	</div>
+</nav>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Wands and Words</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Add your existing styles here */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #9f7833;
+            /* Purple background */
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            flex-wrap: wrap;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+        }
+
+        .header-text h1 {
+            font-size: 2em;
+        }
+
+        .header-text p {
+            font-size: 1.2em;
+        }
+
+
+        .checkout-section {
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #4a2a8b;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 15px;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:hover,
+        input[type="email"]:hover,
+        input[type="tel"]:hover,
+        textarea:hover,
+        select:hover {
+            border-color: #4a2a8b;
+            box-shadow: 0 0 5px rgba(74, 42, 139, 0.5);
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .cart-summary {
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-total {
+            text-align: right;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .payment-methods {
+            margin: 20px 0;
+        }
+
+        .payment-logo {
+            width: 40px;
+            height: 25px;
+            margin-left: 10px;
+        }
+
+
+        button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(90deg, #9f7833, #ffd791);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background: #9c6615;
+            transform: translateY(-2px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h3 {
+            margin: 0 0 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .modal-buttons button {
+            width: 100px;
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .modal-buttons .yes {
+            background-color: #4a2a8b;
+            color: #fff;
+            /* White text */
+        }
+
+        .modal-buttons .no {
+            background-color: #ccc;
+            color: #fff;
+            /* White text */
+        }
+
+        .modal-buttons .yes:hover {
+            background-color: #6b5fb3;
+        }
+
+        .modal-buttons .no:hover {
+            background-color: #999;
+        }
+
+        /* Validation Modal */
+        #validationModal .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #validationModal button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            background-color: #4a2a8b;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #validationModal button:hover {
+            background-color: #6b5fb3;
+        }
+
+        /* Success Modal */
+        #successModal .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #successModal button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            background-color: #4a2a8b;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #successModal button:hover {
+            background-color: #6b5fb3;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Add your existing HTML here -->
+
+    <header>
+        <div class="header-container">
+            <div class="header-text">
+                <h1> The BookNook Store </h1>
+                <p>Your one-stop shop for all your reading needs.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navbar Section -->
+
+    </header>
+
+    <section class="checkout-section">
+
+        <form id="checkoutForm">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" placeholder="John Doe" required>
+
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" placeholder="john.doe@example.com" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" placeholder="123-456-7890" required>
+
+            <label for="address">Shipping Address:</label>
+            <textarea id="address" name="address" rows="3" placeholder="123 Book Lane, Sector-35D, Chandigarh"
+                required></textarea>
+
+            <h2>Payment Options</h2>
+            <div class="payment-methods">
+                <label>
+                    <input type="radio" name="payment" value="credit" required>
+                    Credit Card <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/1024px-Visa_Inc._logo.svg.png "
+                        alt="Visa" class="payment-logo">
+                </label>
+                <br>
+                <label>
+                    <input type="radio" name="payment" value="debit" required>
+                    Debit Card <img
+                        src="https://imageio.forbes.com/blogs-images/steveolenski/files/2016/07/Mastercard_new_logo-1200x865.jpg?format=jpg&height=900&width=1600&fit=bounds"
+                        alt="Mastercard" class="payment-logo">
+                </label>
+                <br>
+                <label>
+                    <input type="radio" name="payment" value="paypal" required>
+                    PayPal <img
+                        src="https://w7.pngwing.com/pngs/665/281/png-transparent-logo-computer-icons-paypal-paypal-blue-angle-rectangle.png"
+                        alt="PayPal" class="payment-logo">
+                </label>
+                <br>
+                <label>
+                    <input type="radio" name="payment" value="upi" required>
+                    UPI (Unified Payments Interface)
+                </label>
+                <br>
+                <label>
+                    <input type="radio" name="payment" value="cod" required>
+                    Cash on Delivery
+                </label>
+            </div>
+            <button type="button" id="placeOrderBtn">Place Order</button>
+        </form>
+    </section>
+
+    <!-- Validation Modal -->
+    <div id="validationModal" class="modal">
+        <div class="modal-content">
+            <h3>Please fill out all the fields and select a payment method.</h3>
+            <button class="no" id="closeValidation">Close</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3>Are you sure you want to place the order?</h3>
+            <div class="modal-buttons">
+                <button class="yes" id="confirmOrder">yes</button>
+                <button class="no" id="cancelOrder">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Success Modal -->
+
+
+    <script>
+        const placeOrderBtn = document.getElementById('placeOrderBtn');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const validationModal = document.getElementById('validationModal');
+        const checkoutForm = document.getElementById('checkoutForm');
+        const closeValidation = document.getElementById('closeValidation');
+        const cancelOrder = document.getElementById('cancelOrder');
+    
+        const yesButton = document.getElementById('confirmOrder'); // Correct button ID
+    
+        placeOrderBtn.addEventListener('click', () => {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const payment = document.querySelector('input[name="payment"]:checked');
+    
+            if (!name || !email || !phone || !address || !payment) {
+                validationModal.style.display = 'flex';
+                return;
+            }
+    
+            if (payment.value === "upi") {
+                yesButton.href = "/upi-payment";  // Flask route for UPI payments
+            } else if (payment.value === "credit") {
+                yesButton.href = "/credit-payment";  // Flask route for credit card
+            } else {
+                yesButton.href = "/checkout-confirmation";  // Default checkout confirmation
+            }
+    
+            confirmationModal.style.display = 'flex';
+        });
+    
+        yesButton.addEventListener("click", function() {
+            window.location.href = yesButton.href;
+        });
+    
+        closeValidation.addEventListener('click', () => {
+            validationModal.style.display = 'none';
+        });
+    
+        cancelOrder.addEventListener('click', () => {
+            confirmationModal.style.display = 'none';
+        });
+    
+        window.addEventListener('click', (event) => {
+            if (event.target === confirmationModal || event.target === validationModal) {
+                validationModal.style.display = 'none';
+                confirmationModal.style.display = 'none';
+            }
+        });
+    </script>
+    
+
+</body>
+
+</html>

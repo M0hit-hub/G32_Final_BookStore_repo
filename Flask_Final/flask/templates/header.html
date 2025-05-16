@@ -1,0 +1,62 @@
+<header>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/static/images/bookstorelogo.png" alt="logo">
+        </div>
+        <div class="navmenu">
+            <ul>
+                <li><a href="{{ url_for('home') }}">HOME</a></li>
+                <li>
+                    <select id="dropdown">
+                        <option value="#">CATEGORIES</option>
+                        <option value="{{ url_for('category', category_name='BusinessEbook') }}">BUSINESS EBOOK</option>
+                        <option value="{{ url_for('category', category_name='health,wellness') }}">HEALTH/WELLNESS</option>
+                        <option value="{{ url_for('category', category_name='history,politics') }}">HISTORY & POLITICS</option>
+                        <option value="{{ url_for('category', category_name='Non-fiction') }}">NON-FICTION</option>
+                        <option value="{{ url_for('category', category_name='Spirituality') }}">SPIRITUALITY</option>
+                        <option value="{{ url_for('category', category_name='Mythology') }}">MYTHOLOGY</option>
+                        <option value="{{ url_for('category', category_name='Languages') }}">LANGUAGES</option>
+                    </select>
+                </li>
+                <li><a href="{{ url_for('authors') }}">AUTHORS</a></li>
+                <li><a href="{{ url_for('about') }}">ABOUT</a></li>
+                <li><a href="{{ url_for('blog') }}">BLOG</a></li>
+                <li><a href="{{ url_for('contact') }}">CONTACT US</a></li>
+                {% if 'user_id' in session %}
+                    <li><a href="{{ url_for('logout') }}">LOGOUT</a></li>
+                    <li><span class="user-welcome">Hello, {{ session['user_name'] }}</span></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">LOGIN</a></li>
+                {% endif %}
+            </ul>
+            <div class="cart">
+                <a href="{{ url_for('cart') }}">
+                    <i class='bx bxs-cart-alt'></i>
+                    <span class="cart-count">0</span> Items | ₹<span class="cart-total">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="main-header">
+        <div class="image-container">
+            <marquee class="books-slide" scrollamount="10" loop="infinite">
+                <img src="/static/images/business 2.jpg" style="height: 400px;">
+                <img src="/static/images/health 1.jpg" style="height: 400px;">
+                <img src="/static/images/health2.jpg" style="height: 400px;">
+                <img src="/static/images/history 1.jpg" style="height: 400px;">
+                <img src="/static/images/history 2.jpg" style="height: 400px;">
+                <img src="/static/images/political 1.jpg" style="height: 400px;">
+                <img src="/static/images/poltical 2.jpg" style="height: 400px;">
+                <img src="/static/images/nonfiction 1.jpg" style="height: 400px;">
+                <img src="/static/images/nonfiction 2.jpg" style="height: 400px;">
+                <img src="/static/images/spiritual 1.jpg" style="height: 400px;">
+                <img src="/static/images/spiritual 2.jpg" style="height: 400px;">
+                <img src="/static/images/myth 1.jpg" style="height: 400px;">
+                <img src="/static/images/myth 2.jpg" style="height: 400px;">
+                <img src="/static/images/lang 1.jpg" style="height: 400px;">
+                <img src="/static/images/lang 2.jpg" style="height: 400px;">
+            </marquee>
+        </div>
+    </div>
+    <hr>
+</header> 

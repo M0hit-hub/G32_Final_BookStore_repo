@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="service-error py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="error-card">
+                    <div class="error-icon mb-4">
+                        <i class="fas fa-exclamation-triangle fa-4x" style="color: #D4A56A;"></i>
+                    </div>
+                    <h2 class="mb-4" style="color: #5E3A1A;">Service Temporarily Unavailable</h2>
+                    <p class="mb-4">We apologize for the inconvenience. Our service is currently undergoing maintenance. Please try again in a few moments.</p>
+                    <div class="retry-info mb-4">
+                        <p class="retry-text mb-2">Automatically retrying in <span class="retry-countdown" style="color: #D4A56A; font-weight: bold;">30</span> seconds...</p>
+                        <div class="progress" style="height: 4px; max-width: 200px; margin: 0 auto;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%; background-color: #D4A56A;"></div>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="/" class="btn btn-outline-secondary me-2">Return to Homepage</a>
+                        <button onclick="window.location.reload()" class="btn btn-warning">Retry Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.service-error {
+    background-color: #f7ede2;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.error-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.error-icon {
+    animation: pulse 2s infinite;
+}
+
+.progress {
+    border-radius: 2px;
+}
+
+.btn-warning {
+    background-color: #D4A56A;
+    border-color: #D4A56A;
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #5E3A1A;
+    border-color: #5E3A1A;
+}
+
+.btn-outline-secondary {
+    color: #5E3A1A;
+    border-color: #5E3A1A;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #5E3A1A;
+    color: white;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let seconds = 30;
+    const countdownElement = document.querySelector('.retry-countdown');
+    const progressBar = document.querySelector('.progress-bar');
+    
+    const countdown = setInterval(() => {
+        seconds--;
+        countdownElement.textContent = seconds;
+        progressBar.style.width = (seconds / 30 * 100) + '%';
+        
+        if (seconds <= 0) {
+            clearInterval(countdown);
+            window.location.reload();
+        }
+    }, 1000);
+});
+</script>
+{% endblock %}

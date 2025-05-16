@@ -1,0 +1,387 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block title %}Order Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-stat {
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        background-color: white;
+        transition: transform 0.2s;
+    }
+    .dashboard-stat:hover {
+        transform: translateY(-5px);
+    }
+    .chart-container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        height: 350px;
+    }
+    .filter-bar {
+        display: flex;
+        margin-bottom: 20px;
+        background-color: white;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .filter-btn {
+        background-color: transparent;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 6px 12px;
+        margin-right: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .filter-btn.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    .metric-value {
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .metric-label {
+        color: #6c757d;
+        font-size: 14px;
+    }
+    .growth-indicator {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .growth-indicator.positive {
+        color: #28a745;
+    }
+    .growth-indicator.negative {
+        color: #dc3545;
+    }
+    .table-container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .table {
+        margin-bottom: 0;
+    }
+    .card-title {
+        font-size: 18px;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Order Analytics</h1>
+    <div>
+        <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-download fa-sm text-white-50 mr-1"></i> Export Report
+        </button>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <button class="filter-btn active" data-period="7">Last 7 Days</button>
+    <button class="filter-btn" data-period="30">Last 30 Days</button>
+    <button class="filter-btn" data-period="90">Last 90 Days</button>
+    <button class="filter-btn" data-period="365">Last Year</button>
+    <button class="filter-btn" data-period="all">All Time</button>
+</div>
+
+<!-- Order Statistics -->
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-stat">
+            <div class="metric-label">Total Orders</div>
+            <div class="metric-value">{{ total_orders }}</div>
+            <div class="growth-indicator {% if order_growth > 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas fa-{% if order_growth > 0 %}arrow-up{% else %}arrow-down{% endif %} mr-1"></i>
+                {{ order_growth }}% from previous period
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-stat">
+            <div class="metric-label">Average Order Value</div>
+            <div class="metric-value">${{ avg_order_value }}</div>
+            <div class="growth-indicator {% if aov_growth > 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas fa-{% if aov_growth > 0 %}arrow-up{% else %}arrow-down{% endif %} mr-1"></i>
+                {{ aov_growth }}% from previous period
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-stat">
+            <div class="metric-label">Conversion Rate</div>
+            <div class="metric-value">{{ conversion_rate }}%</div>
+            <div class="growth-indicator {% if conversion_change > 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas fa-{% if conversion_change > 0 %}arrow-up{% else %}arrow-down{% endif %} mr-1"></i>
+                {{ conversion_change }}% from previous period
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="dashboard-stat">
+            <div class="metric-label">Repeat Customers</div>
+            <div class="metric-value">{{ repeat_customers }}%</div>
+            <div class="growth-indicator {% if repeat_growth > 0 %}positive{% else %}negative{% endif %}">
+                <i class="fas fa-{% if repeat_growth > 0 %}arrow-up{% else %}arrow-down{% endif %} mr-1"></i>
+                {{ repeat_growth }}% from previous period
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row">
+    <div class="col-xl-8">
+        <div class="chart-container">
+            <h5 class="card-title">Order Trends</h5>
+            <canvas id="orderTrendsChart"></canvas>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="chart-container">
+            <h5 class="card-title">Order Status Distribution</h5>
+            <canvas id="orderStatusChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- More Charts Row -->
+<div class="row">
+    <div class="col-xl-6">
+        <div class="chart-container">
+            <h5 class="card-title">Orders by Time of Day</h5>
+            <canvas id="ordersByTimeChart"></canvas>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="chart-container">
+            <h5 class="card-title">Orders by Product Category</h5>
+            <canvas id="ordersByCategoryChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Top Customers Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="table-container">
+            <h5 class="card-title">Top Customers</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Orders</th>
+                            <th>Total Spent</th>
+                            <th>Last Order</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in top_customers %}
+                        <tr>
+                            <td>{{ customer.name }}</td>
+                            <td>{{ customer.orders }}</td>
+                            <td>${{ customer.total_spent }}</td>
+                            <td>{{ customer.last_order }}</td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-primary">View Details</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sample data - In production, this would come from your Django views
+        const orderTrendsData = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Orders',
+                data: [65, 59, 80, 81, 56, 55, 40, 45, 60, 75, 85, 90],
+                borderColor: '#4e73df',
+                backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                borderWidth: 2,
+                pointRadius: 3,
+                pointBackgroundColor: '#4e73df',
+                pointBorderColor: '#fff',
+                pointHoverRadius: 5,
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        const orderStatusData = {
+            labels: ['Completed', 'Pending', 'Processing', 'Cancelled'],
+            datasets: [{
+                data: [65, 15, 12, 8],
+                backgroundColor: ['#1cc88a', '#f6c23e', '#36b9cc', '#e74a3b'],
+                borderWidth: 1
+            }]
+        };
+
+        const ordersByTimeData = {
+            labels: ['Morning (6-12)', 'Afternoon (12-5)', 'Evening (5-9)', 'Night (9-6)'],
+            datasets: [{
+                label: 'Orders',
+                data: [30, 45, 60, 25],
+                backgroundColor: 'rgba(54, 185, 204, 0.7)',
+                borderColor: 'rgba(54, 185, 204, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const ordersByCategoryData = {
+            labels: ['Fiction', 'Non-Fiction', 'Children\'s Books', 'Merchandise', 'Stationery'],
+            datasets: [{
+                label: 'Orders',
+                data: [45, 25, 20, 15, 10],
+                backgroundColor: [
+                    'rgba(78, 115, 223, 0.7)',
+                    'rgba(28, 200, 138, 0.7)',
+                    'rgba(246, 194, 62, 0.7)',
+                    'rgba(54, 185, 204, 0.7)',
+                    'rgba(231, 74, 59, 0.7)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        // Order Trends Chart
+        new Chart(document.getElementById('orderTrendsChart'), {
+            type: 'line',
+            data: orderTrendsData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Orders: ${context.parsed.y}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Order Status Chart
+        new Chart(document.getElementById('orderStatusChart'), {
+            type: 'doughnut',
+            data: orderStatusData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Orders by Time Chart
+        new Chart(document.getElementById('ordersByTimeChart'), {
+            type: 'bar',
+            data: ordersByTimeData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        // Orders by Category Chart
+        new Chart(document.getElementById('ordersByCategoryChart'), {
+            type: 'pie',
+            data: ordersByCategoryData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Filter button functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // In a real application, you would make an AJAX call to update the charts based on the selected period
+                // For this example, we'll just simulate a loading state
+                const period = this.getAttribute('data-period');
+                console.log(`Filtering data for period: ${period}`);
+                
+                // Update charts with new data (in a real app, this would be done after receiving response from server)
+                // This is just a placeholder for demonstration
+            });
+        });
+    });
+</script>
+{% endblock %} 
